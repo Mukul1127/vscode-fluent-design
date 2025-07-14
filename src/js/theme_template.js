@@ -143,7 +143,7 @@ const initFluentUI = (isCompact, lightBgColor, darkBgColor, accent, obs) => {
     value: "var(--wallpaper)",
   });
 
-  console.log("Fluent UI: initialised!");
+  console.log("Fluent Design Patch: Initialised!");
 
   // disconnect the observer because we don't need it anymore
   if (obs) {

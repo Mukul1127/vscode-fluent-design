@@ -4,7 +4,6 @@
 		"target": "ES2022",
 		"lib": ["ES2022"],
 
-		"rootDir": ".",
 		"sourceMap": true,
 
 		"strict": true,
@@ -12,5 +11,5 @@
 		"noFallthroughCasesInSwitch": true,
 		"noUnusedParameters": true
 	},
-	"include": ["src", "esbuild.ts"]
+	"include": ["src", "scripts/esbuild.ts"]
 }

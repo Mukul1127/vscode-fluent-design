@@ -34,7 +34,7 @@ async function generateBluredBackgroundImage(
  */
 async function getCSSTag(url: string): Promise<string | null> {
   try {
-    const fileName = path.join(import.meta.dirname, url);
+    const fileName = import.meta.resolve(url);
     const fileContent = await readFile(fileName);
     return `<style>${fileContent}</style>\n`;
   } catch (error) {
@@ -111,7 +111,7 @@ async function buildJavaScriptTag(): Promise<string | null> {
   try {
     const config = vscode.workspace.getConfiguration("vscode-fluent-design");
     const jsTemplate = await readFile(
-      path.join(import.meta.dirname, "js", "theme_template.js"),
+      import.meta.resolve("js/theme_template.js"),
     );
     let buffer = jsTemplate.toString();
 

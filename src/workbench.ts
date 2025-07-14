@@ -41,21 +41,23 @@ export async function locateWorkbench(): Promise<string | null> {
           // As far as I know, there should never be a directory with a .html suffix.
           // We shouldn't exit the loop here, because still might be a valid workbench file
           vscode.window.showInformationMessage(
-            htmlPathCandidate + messages.workbenchPathIsDirectory,
+            messages.isDirectoryNotFile(htmlPathCandidate),
           );
           continue;
         }
         return htmlPathCandidate;
       } catch (error) {
         if (!(error instanceof Error)) {
-          vscode.window.showErrorMessage(messages.errorNotInstanceOfError);
+          vscode.window.showErrorMessage(
+            messages.errorNotInstanceOfError(error),
+          );
           continue;
         }
         if (error.code !== "ENOENT") {
           // As long as the error is not "file not found", we should log it
           // We shouldn't exit the loop here, because still might be a valid workbench file
           vscode.window.showInformationMessage(
-            `${messages.workbenchPathFailedStat} ${error}`,
+            messages.workbenchPathFailedStat(String(error)),
           );
         }
       }

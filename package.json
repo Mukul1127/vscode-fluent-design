@@ -39,31 +39,31 @@
 				"vscode-fluent-design.enableWallpaper": {
 					"type": "boolean",
 					"default": false,
-					"description": "Enable background image",
+					"description": "Enable sampling the specified wallpaper",
 					"scope": "application"
 				},
 				"vscode-fluent-design.wallpaperPath": {
 					"type": "string",
 					"default": "C:\\Windows\\Web\\Wallpaper\\Windows\\img0.jpg",
-					"description": "Path to image. By default, it will use the default Windows 11 wallpaper for the Windows light theme.",
+					"description": "Path to background image (JPEG, PNG, WebP, AVIF, GIF, SVG or TIFF).\nBy default, it will use the Windows 11 light mode wallpaper.",
 					"scope": "application"
 				},
 				"vscode-fluent-design.accent": {
 					"type": "string",
 					"default": "#005fb8",
-					"description": "Accent color (default #005fb8). Only HEX values are supported.",
+					"description": "Accent color. Only HEX values are supported.",
 					"scope": "application"
 				},
 				"vscode-fluent-design.darkBackground": {
 					"type": "string",
 					"default": "#202020",
-					"description": "Background color for dark mode (default #202020). Only HEX values are supported.",
+					"description": "Background color for dark mode. Only HEX values are supported.",
 					"scope": "application"
 				},
 				"vscode-fluent-design.lightBackground": {
 					"type": "string",
 					"default": "#ffffff",
-					"description": "Background color for light mode (default #ffffff). Only HEX values are supported.",
+					"description": "Background color for light mode. Only HEX values are supported.",
 					"scope": "application"
 				}
 			}
@@ -71,10 +71,10 @@
 	},
 	"scripts": {
 		"dev": "echo 'Open extension.ts in VSCode and then run your extension with F5",
-		"compile": "bun ./esbuild.ts",
-		"watch": "bun ./esbuild.ts --watch",
-		"package": "bun compile --production && vsce package",
-		"clean": "rm -rf dist && rm -f vscode-fluent-design-*.vsix",
+		"compile": "bun scripts/esbuild.ts",
+		"watch": "bun scripts/esbuild.ts --watch",
+		"clean": "bun scripts/clean.ts",
+		"package": "bun clean && bun compile --production && vsce package",
 		"check": "tsc --noEmit",
 		"format": "biome format --write",
 		"lint": "biome lint --write",
@@ -83,7 +83,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.1.1",
-		"@types/bun": "1.2.18",
+		"@types/node": "24.0.13",
 		"@types/vscode": "1.93.0",
 		"@vscode/vsce": "3.6.0",
 		"esbuild": "0.25.6",

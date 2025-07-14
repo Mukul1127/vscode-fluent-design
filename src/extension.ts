@@ -1,4 +1,3 @@
-import { constants } from "node:fs";
 import { access } from "node:fs/promises";
 import * as vscode from "vscode";
 import { createBackup, restoreBackup } from "./backups.js";
@@ -11,14 +10,14 @@ function reloadWindow(): void {
 }
 
 /**
- * Checks whether a path exists (Shim).
+ * Checks whether a path exists asynchronously.
  *
  * @param {string} path The path to be checked.
  * @returns {Promise<boolean>} A promise returning `true` if the path exists and `false` otherwise.
  */
 export async function exists(path: string): Promise<boolean> {
   try {
-    await access(path, constants.F_OK);
+    await access(path);
     return true;
   } catch {
     return false;
