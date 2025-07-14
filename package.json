@@ -36,6 +36,12 @@
 			"title": "Fluent Design",
 			"type": "object",
 			"properties": {
+				"vscode-fluent-design.compact": {
+					"type": "boolean",
+					"default": false,
+					"description": "Applies slightly-less padding around some of the elements. The difference is subtle but can help those with limited space.",
+					"scope": "application"
+				},
 				"vscode-fluent-design.enableWallpaper": {
 					"type": "boolean",
 					"default": false,

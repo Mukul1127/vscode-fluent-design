@@ -1,5 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
+import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 import * as vscode from "vscode";
 import { messages } from "./messages.js";
@@ -34,7 +34,7 @@ async function generateBluredBackgroundImage(
  */
 async function getCSSTag(url: string): Promise<string | null> {
   try {
-    const fileName = import.meta.resolve(url);
+    const fileName = fileURLToPath(import.meta.resolve(url));
     const fileContent = await readFile(fileName);
     return `<style>${fileContent}</style>\n`;
   } catch (error) {
@@ -68,9 +68,9 @@ async function buildCSSTag(): Promise<string> {
 
   let res = "";
 
-  const styles = [path.join("css", "editor_chrome.css")];
+  const styles = ["./css/editor_chrome.css"];
   if (isDark) {
-    styles.push(path.join("css", "dark_vars.css"));
+    styles.push("./css/dark_vars.css");
   }
 
   for (const url of styles) {
@@ -107,29 +107,30 @@ async function buildCSSTag(): Promise<string> {
  *
  * @returns {Promise<string | null>} A promise that resolves the script tag if no error occured and `null` otherwise.
  */
-async function buildJavaScriptTag(): Promise<string | null> {
+async function buildJavaScriptTag(): Promise<string> {
   try {
     const config = vscode.workspace.getConfiguration("vscode-fluent-design");
-    const jsTemplate = await readFile(
-      import.meta.resolve("js/theme_template.js"),
-    );
-    let buffer = jsTemplate.toString();
 
     const isCompact = config.get<string>("compact");
     const accent = config.get<string>("accent");
     const darkBgColor = `${config.get<string>("darkBackground")}b3`;
     const lightBgColor = `${config.get<string>("lightBackground")}b3`;
 
-    buffer = buffer.replace(/\[IS_COMPACT\]/g, String(isCompact));
-    buffer = buffer.replace(/\[LIGHT_BG\]/g, `"${lightBgColor}"`);
-    buffer = buffer.replace(/\[DARK_BG\]/g, `"${darkBgColor}"`);
-    buffer = buffer.replace(/\[ACCENT\]/g, `"${accent}"`);
+    let jsTemplate = await readFile(
+      fileURLToPath(import.meta.resolve("./js/theme_template.js")),
+      "utf-8"
+    );
 
-    const tag = `<script>${buffer}</script>`;
+    jsTemplate = jsTemplate.replace(/\[IS_COMPACT\]/g, String(isCompact));
+    jsTemplate = jsTemplate.replace(/\[ACCENT\]/g, String(accent));
+    jsTemplate = jsTemplate.replace(/\[LIGHT_BG\]/g, lightBgColor);
+    jsTemplate = jsTemplate.replace(/\[DARK_BG\]/g, darkBgColor);
+
+    const tag = `<script>${jsTemplate}</script>`;
     return tag;
   } catch (error) {
     vscode.window.showErrorMessage(String(error));
-    return null;
+    return "";
   }
 }
 
