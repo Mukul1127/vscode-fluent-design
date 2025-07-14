@@ -36,7 +36,8 @@ export async function locateWorkbench(): Promise<string | null> {
     candidateHtmlFiles.map((file) => path.join(basePath, dir, file)),
   );
 
-  const candidatePromises: Promise<string>[] = candidatePaths.map(async (candidatePath) => {
+  const candidatePromises: Promise<string>[] = candidatePaths.map(
+    async (candidatePath) => {
       try {
         const statResult = await stat(candidatePath);
         if (statResult.isDirectory()) {
@@ -61,7 +62,8 @@ export async function locateWorkbench(): Promise<string | null> {
         }
         throw error;
       }
-  });
+    },
+  );
 
   try {
     const result = await Promise.any(candidatePromises);

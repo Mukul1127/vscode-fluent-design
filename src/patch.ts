@@ -61,9 +61,9 @@ async function buildCssTag(): Promise<string> {
   const enableBg = config.get<boolean>("enableWallpaper", false);
   const bgUrl = config.get<string>("wallpaperPath", "");
 
-  const accent = `${config.get<string>("accent", "#005fb8")}`;
-  const darkBgColor = `${config.get<string>("darkBackground", "#202020")}b3`;
-  const lightBgColor = `${config.get<string>("lightBackground", "#ffffff")}b3`;
+  const accent = `${config.get<string>("accent")}`;
+  const darkBgColor = `${config.get<string>("darkBackground")}b3`;
+  const lightBgColor = `${config.get<string>("lightBackground")}b3`;
 
   let encodedImage: string | null = null;
 
@@ -120,9 +120,9 @@ async function buildJavaScriptTag(): Promise<string> {
     const config = workspace.getConfiguration("vscode-fluent-design");
 
     const isCompact = config.get<string>("compact");
-    const accent = config.get<string>("accent");
-    const darkBgColor = `${config.get<string>("darkBackground")}b3`;
-    const lightBgColor = `${config.get<string>("lightBackground")}b3`;
+    const accent = `"${config.get<string>("accent")}"`;
+    const darkBgColor = `"${config.get<string>("darkBackground")}b3"`;
+    const lightBgColor = `"${config.get<string>("lightBackground")}b3"`;
 
     let jsTemplate = await readFile(
       fileURLToPath(import.meta.resolve("./js/theme_template.js")),
@@ -130,7 +130,7 @@ async function buildJavaScriptTag(): Promise<string> {
     );
 
     jsTemplate = jsTemplate.replace(/\[IS_COMPACT\]/g, String(isCompact));
-    jsTemplate = jsTemplate.replace(/\[ACCENT\]/g, String(accent));
+    jsTemplate = jsTemplate.replace(/\[ACCENT\]/g, accent);
     jsTemplate = jsTemplate.replace(/\[LIGHT_BG\]/g, lightBgColor);
     jsTemplate = jsTemplate.replace(/\[DARK_BG\]/g, darkBgColor);
 

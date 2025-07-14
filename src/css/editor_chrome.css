@@ -1,4 +1,6 @@
-/** biome-ignore-all lint/style/noDescendingSpecificity: I'm too lazy to fix it */
+/** biome-ignore-all lint/style/noDescendingSpecificity: I'm too lazy to fix it, we sohuld just redo the css */
+/** biome-ignore-all lint/nursery/noImportantStyles: This file overrides tons of VSCode's styles, we NEED !important */
+
 :root {
   --semibold: 500;
   --f-caption: 0.75rem;
@@ -122,7 +124,7 @@ html {
 
 :host-context(.windows),
 .windows {
-  font-family: var(--font-display);
+  font-family: var(--font-display) !important;
 }
 
 .acrylic {
@@ -133,37 +135,37 @@ html {
 
 .monaco-workbench {
   color: rgba(247, 249, 252, 0.859);
-  background: var(--noise-bg) repeat var(--app-bg);
+  background: var(--noise-bg) repeat var(--app-bg) !important;
   background-blend-mode: exclusion;
 }
 
 .card {
-  background: var(--noise-bg) repeat var(--card-bg);
+  background: var(--noise-bg) repeat var(--card-bg) !important;
   background-blend-mode: exclusion;
   box-shadow: var(--card-shadow);
   overflow-y: auto;
   border-right: var(--border);
-  border: var(--border);
+  border: var(--border) !important;
   border-radius: var(--border-radius);
 }
 
 /* Welcome page */
 .monaco-workbench .part.editor > .content .gettingStartedContainer h1 {
-  font-size: clamp(1.5rem, 8vw - 2rem, 3rem);
+  font-size: clamp(1.5rem, 8vw - 2rem, 3rem) !important;
 }
 
 .monaco-workbench .pane > .pane-body .welcome-view-content {
-  max-width: 100%;
+  max-width: 100% !important;
 }
 
 .monaco-workbench .part.titlebar {
-  background: #ffffff00;
-  border: none;
-  height: var(--s7);
+  background: #ffffff00 !important;
+  border: none !important;
+  height: var(--s7) !important;
 }
 
 .monaco-workbench .part > .content {
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
 .monaco-workbench .part.editor {
@@ -175,34 +177,34 @@ html {
 
 .monaco-diff-editor .original canvas.decorationsOverviewRuler,
 .monaco-diff-editor .original .scrollbar {
-  right: 0;
+  right: 0 !important;
 }
 
 .monaco-diff-editor .diffOverview {
-  right: var(--s2);
-  left: unset;
-  background: var(--noise-bg) repeat var(--editor-bg);
+  right: var(--s2) !important;
+  left: unset !important;
+  background: var(--noise-bg) repeat var(--editor-bg) !important;
   background-blend-mode: exclusion;
   mix-blend-mode: var(--card-bg-blend-mode);
 }
 
 .monaco-workbench .editor.compact {
-  margin-right: var(--s3);
-  margin-left: var(--s3);
+  margin-right: var(--s3) !important;
+  margin-left: var(--s3) !important;
 }
 
 .editor-container {
-  background: var(--noise-bg) repeat var(--editor-bg);
+  background: var(--noise-bg) repeat var(--editor-bg) !important;
   background-blend-mode: exclusion;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  border-bottom: var(--border);
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: var(--border) !important;
   margin-right: var(--s3);
 }
 
 .editor-container.compact {
-  margin-right: var(--s3);
+  margin-right: var(--s3) !important;
 }
 
 .monaco-workbench
@@ -217,13 +219,13 @@ html {
 /* Settings page */
 /* .settings-editor, */
 .extension-editor {
-  background: var(--noise-bg) repeat var(--card-bg);
+  background: var(--noise-bg) repeat var(--card-bg) !important;
   background-blend-mode: exclusion;
   backdrop-filter: var(--backdrop-filter);
   box-shadow: var(--card-shadow);
   /* JSON theme will add border-right and we need to override it */
   border-right: var(--border);
-  border: var(--border);
+  border: var(--border) !important;
   border-radius: var(--border-radius);
 }
 
@@ -233,13 +235,13 @@ html {
 
 /* TABS */
 .tabs {
-  background: transparent;
+  background: transparent !important;
 }
 
 .tabs-and-actions-container {
   padding-left: var(--s4);
-  border-bottom: none;
-  height: 32px;
+  border-bottom: none !important;
+  height: 32px !important;
 }
 
 /* .tabs-container {
@@ -247,25 +249,25 @@ html {
 } */
 
 .tabs-container.has-text {
-  height: auto;
-  width: auto;
-  max-width: 97%;
+  height: auto !important;
+  width: auto !important;
+  max-width: 97% !important;
 }
 
 .replace-input {
-  max-width: calc(100% - 60px);
+  max-width: calc(100% - 60px) !important;
 }
 
 .tabs-container > .tab {
-  background-color: transparent;
+  background-color: transparent !important;
   border-top-left-radius: var(--border-radius);
   border-top-right-radius: var(--border-radius);
-  border-top: transparent;
-  border: 1px solid transparent;
-  height: 32px;
+  border-top: transparent !important;
+  border: 1px solid transparent !important;
+  height: 32px !important;
   overflow: hidden;
-  padding-left: var(--s4);
-  padding-right: var(--s4);
+  padding-left: var(--s4) !important;
+  padding-right: var(--s4) !important;
   position: relative;
   transition:
     borderRadius var(--easing-timing-fast) var(--easing-curve-in),
@@ -276,7 +278,7 @@ html {
 
 .tabs-and-actions-container.tabs-border-bottom:after,
 .tabs-container > .tab.active.tab-border-bottom > .tab-border-bottom-container {
-  display: none;
+  display: none !important;
 }
 
 .tabs-container > .tab:after {
@@ -298,14 +300,14 @@ html {
 }
 
 .tabs-container > .tab:hover {
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
 .tabs-container > .tab:hover {
-  border-top: var(--border);
-  border-left: var(--border);
-  border-right: var(--border);
-  background-color: transparent;
+  border-top: var(--border) !important;
+  border-left: var(--border) !important;
+  border-right: var(--border) !important;
+  background-color: transparent !important;
 }
 
 .tabs-container > .tab:hover::after {
@@ -314,15 +316,15 @@ html {
 }
 
 .tabs-container > .tab.active.tab-border-top > .tab-border-top-container {
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
 .tabs-container > .tab.active {
-  border-color: var(--border-color);
-  border-left: var(--border);
-  border-top: var(--border);
-  border-right: var(--border);
-  border-bottom: none;
+  border-color: var(--border-color) !important;
+  border-left: var(--border) !important;
+  border-top: var(--border) !important;
+  border-right: var(--border) !important;
+  border-bottom: none !important;
   border-top-left-radius: var(--border-radius);
   border-top-right-radius: var(--border-radius);
 }
@@ -357,7 +359,7 @@ html {
   .tabs-container
   > .tab
   .tab-label {
-  line-height: 32px;
+  line-height: 32px !important;
 }
 
 .monaco-workbench
@@ -366,48 +368,48 @@ html {
   .editor-group-container
   > .title
   .editor-actions {
-  height: 32px;
+  height: 32px !important;
 }
 
 .monaco-workbench .part.panel .composite.title {
-  height: 32px;
+  height: 32px !important;
 }
 
 .monaco-workbench .part.panel.bottom {
   box-sizing: border-box;
   overflow: hidden;
-  background: transparent;
-  border: none;
+  background: transparent !important;
+  border: none !important;
   margin: 0 8px;
 }
 
 .monaco-workbench .part.panel.bottom.compact {
-  margin: 0 4px;
+  margin: 0 4px !important;
 }
 
 .monaco-workbench .part.panel .composite.title {
-  border-top: none;
-  background: transparent;
-  border: none;
+  border-top: none !important;
+  background: transparent !important;
+  border: none !important;
   border-top-right-radius: var(--border-radius);
   border-top-left-radius: var(--border-radius);
 }
 
 .monaco-workbench .part.panel.bottom > .content {
-  width: calc(100% - 1px);
-  background: var(--card-bg);
-  border-right: var(--border);
-  border-left: var(--border);
-  border-bottom: var(--border);
+  width: calc(100% - 1px) !important;
+  background: var(--card-bg) !important;
+  border-right: var(--border) !important;
+  border-left: var(--border) !important;
+  border-bottom: var(--border) !important;
   border-radius: var(--border-radius);
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--card-shadow) !important;
 }
 
 .monaco-workbench
   .part.panel
   .pane-body.integrated-terminal
   .terminal-outer-container {
-  background: transparent;
+  background: transparent !important;
 }
 
 /* Bottom panel tabs */
@@ -421,7 +423,7 @@ html {
   line-height: var(--f-body-lh);
   font-family: var(--font-display-semibold);
   text-transform: none;
-  border: none;
+  border: none !important;
 }
 
 .monaco-workbench
@@ -431,12 +433,12 @@ html {
   > .monaco-action-bar
   .action-item {
   position: relative;
-  background-color: transparent;
-  border-top: 1px solid transparent;
-  border-left: 1px solid transparent;
-  border-right: 1px solid transparent;
+  background-color: transparent !important;
+  border-top: 1px solid transparent !important;
+  border-left: 1px solid transparent !important;
+  border-right: 1px solid transparent !important;
   transition: borderColor var(--easing-timing-fast) var(--easing-curve-in);
-  border-radius: 4px;
+  border-radius: 4px !important;
 }
 
 .monaco-workbench
@@ -460,7 +462,7 @@ html {
   transition:
     transform var(--easing-timing-fast) var(--easing-curve-in),
     opacity var(--easing-timing-fast) var(--easing-curve-in);
-  margin: 0;
+  margin: 0 !important;
 }
 
 .monaco-workbench
@@ -475,11 +477,11 @@ html {
   > .panel-switcher-container
   > .monaco-action-bar
   .action-item.checked {
-  border-top: 1px solid var(--border-color);
-  border-left: 1px solid var(--border-color);
-  border-right: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-color) !important;
+  border-left: 1px solid var(--border-color) !important;
+  border-right: 1px solid var(--border-color) !important;
 
-  background: var(--noise-bg) repeat var(--card-bg);
+  background: var(--noise-bg) repeat var(--card-bg) !important;
 }
 
 .monaco-workbench
@@ -504,19 +506,19 @@ html {
   .monaco-workbench .editor-instance .xterm-viewport,
   .monaco-workbench .pane-body.integrated-terminal .xterm-viewport,  */
 .terminal {
-  background: var(--card-bg);
+  background: var(--card-bg) !important;
 }
 
 /* Breadcrumbs */
 .monaco-breadcrumbs {
-  background: var(--card-bg);
-  width: calc(100% - 16px);
+  background: var(--card-bg) !important;
+  width: calc(100% - 16px) !important;
   border-top-left-radius: var(--border-radius);
   border-top-right-radius: var(--border-radius);
 }
 
 .monaco-breadcrumbs.compact {
-  width: calc(100% - 8px);
+  width: calc(100% - 8px) !important;
 }
 
 /* Sidebar */
@@ -535,62 +537,62 @@ html {
 }
 
 .sidebar.compact {
-  padding: var(--s2) var(--s3);
+  padding: var(--s2) var(--s3) !important;
 }
 
 .sidebar.compact.left {
-  margin-left: var(--s2);
+  margin-left: var(--s2) !important;
 }
 
 .sidebar.compact.right {
-  margin-right: 0;
+  margin-right: 0 !important;
 }
 
 .sidebar > .title {
-  height: auto;
-  background-color: transparent;
+  height: auto !important;
+  background-color: transparent !important;
   margin-top: var(--s4);
   margin-bottom: var(--s2);
   border-bottom: var(--border);
 }
 
 .sidebar.compact > .title {
-  margin-top: var(--s2);
-  height: 28px;
+  margin-top: var(--s2) !important;
+  height: 28px !important;
 }
 
 .sidebar > .title > .title-label {
-  padding-left: 0;
+  padding-left: 0 !important;
 }
 
 .sidebar > .title > .title-label h2 {
-  font-size: var(--f-subtitle);
-  line-height: var(--f-subtitle-lh);
-  font-family: var(--font-display-semibold);
-  text-transform: none;
-  font-weight: unset;
-  color: var(--foreground);
+  font-size: var(--f-subtitle) !important;
+  line-height: var(--f-subtitle-lh) !important;
+  font-family: var(--font-display-semibold) !important;
+  text-transform: none !important;
+  font-weight: unset !important;
+  color: var(--foreground) !important;
 }
 
 .sidebar.compact > .title > .title-label h2 {
-  font-size: 18px;
-  line-height: 22px;
+  font-size: 18px !important;
+  line-height: 22px !important;
 }
 
 .sidebar > .content {
-  max-width: 100%;
-  max-height: 96%;
+  max-width: 100% !important;
+  max-height: 96% !important;
 }
 
 .sidebar > .split-view-view {
-  max-height: calc(100% - 42px);
+  max-height: calc(100% - 42px) !important;
 }
 
 .monaco-split-view2.separator-border
   > .monaco-scrollable-element
   > .split-view-container
   > .split-view-view:not(:first-child):before {
-  display: none;
+  display: none !important;
 }
 
 .monaco-list-rows .monaco-list-row {
@@ -603,12 +605,12 @@ html {
   position: absolute;
   content: "";
   display: block;
-  border: none;
-  height: 12px;
-  width: 3px;
-  border-radius: var(--s3);
-  background-color: var(--accent);
-  top: 50%;
+  border: none !important;
+  height: 12px !important;
+  width: 3px !important;
+  border-radius: var(--s3) !important;
+  background-color: var(--accent) !important;
+  top: 50% !important;
   transform: translateY(-6px) scaleY(0);
   opacity: 0;
   transform-origin: center;
@@ -621,19 +623,19 @@ html {
 
 .settings-editor-tree .monaco-list-row::before,
 .notifications-toasts .monaco-list-row::before {
-  height: 100%;
-  top: 0;
+  height: 100% !important;
+  top: 0 !important;
 }
 
 .quick-input-widget {
   animation: quickInputWidget var(--easing-timing-normal) var(--easing-curve-in)
-    forwards;
+    forwards !important;
   /* animation-delay: 60s; */
 }
 
 .quick-input-widget .quick-input-list {
   animation: quickInputListIn var(--easing-timing-fast) var(--easing-curve-in)
-    forwards;
+    forwards !important;
   /* animation-delay: 60s; */
 }
 
@@ -641,24 +643,24 @@ html {
 .monaco-list-row.selected,
 .quick-input-widget .monaco-list-row.selected.focused,
 .monaco-list-row.selected.focused {
-  background: var(--list-item-bg);
-  color: var(--foreground);
+  background: var(--list-item-bg) !important;
+  color: var(--foreground) !important;
 }
 
 .quick-input-list .monaco-highlighted-label {
-  color: var(--foreground);
+  color: var(--foreground) !important;
 }
 
 .quick-input-widget .monaco-list-row:hover,
 .quick-input-widget .monaco-list-row:hover.focused,
 .monaco-list-row:hover,
 .monaco-list-row:hover.focused {
-  background: var(--list-item-bg);
-  color: var(--foreground);
+  background: var(--list-item-bg) !important;
+  color: var(--foreground) !important;
 }
 
 .monaco-list-row:hover > .monaco-highlighted-label {
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 .quick-input-widget .monaco-list-row.selected::before,
@@ -673,15 +675,15 @@ html {
 
 .settings-editor-tree .monaco-list-row:hover::before,
 .notifications-toasts .monaco-list-row:hover::before {
-  transform: translateY(0px) scaleY(1);
+  transform: translateY(0px) scaleY(1) !important;
 }
 
 .settings-editor
   > .settings-body
   > .settings-tree-container
   .monaco-list-row::before {
-  height: 80%;
-  top: 0;
+  height: 80% !important;
+  top: 0 !important;
 }
 
 .settings-editor
@@ -702,7 +704,7 @@ html {
   .setting-item-contents.is-configured
   .setting-item-modified-indicator {
   width: 3px;
-  border: none;
+  border: none !important;
   border-radius: 4px;
   background-color: var(--accent);
 }
@@ -715,7 +717,7 @@ html {
 /* Form elements */
 .monaco-workbench input,
 .monaco-workbench select {
-  background: transparent;
+  background: transparent !important;
   backdrop-filter: var(--backdrop-filter);
 }
 
@@ -730,8 +732,8 @@ html {
 .monaco-select-box-dropdown-container > .select-box-dropdown-list-container
   .monaco-list
   .monaco-list-row:hover {
-  background-color: var(--acccent-pressed-bg);
-  color: var(--list-item-fg);
+  background-color: var(--acccent-pressed-bg) !important;
+  color: var(--list-item-fg) !important;
 }
 
 .quick-input-list .monaco-list-row.focused .monaco-keybinding-key,
@@ -739,7 +741,7 @@ html {
   .monaco-list-row.focused
   .quick-input-list-entry
   .quick-input-list-separator {
-  color: var(--foreground);
+  color: var(--foreground) !important;
 }
 
 /* Buttons */
@@ -747,7 +749,7 @@ html {
 .monaco-text-button {
   border-radius: var(--button-radius);
   /* background: var(--accent) !important; */
-  color: #ffffff;
+  color: #ffffff !important;
   text-align: center;
   font-feature-settings: "rclt" off;
   font-size: var(--f-body);
@@ -763,43 +765,43 @@ html {
 
 /* Activity bar */
 .activitybar {
-  background-color: transparent;
-  border: none;
+  background-color: transparent !important;
+  border: none !important;
 }
 
 .activitybar.compact {
-  width: 100%;
+  width: 100% !important;
 }
 
 .activitybar.bordered:before {
-  display: none;
+  display: none !important;
 }
 
 .activitybar.left {
-  margin-left: var(--s3);
+  margin-left: var(--s3) !important;
   animation: sidebarLeftIn var(--easing-timing-slow) var(--easing-curve-in)
-    forwards;
+    forwards !important;
   animation-delay: 80ms;
 }
 
 .activitybar.right {
   margin-left: -4px;
   animation: sidebarRightIn var(--easing-timing-slow) var(--easing-curve-in)
-    forwards;
+    forwards !important;
   animation-delay: 80ms;
 }
 
 .activitybar.compact.right {
-  margin-left: -4px;
+  margin-left: -4px !important;
 }
 
 .activitybar.compact .content {
-  width: 100%;
+  width: 100% !important;
 }
 
 .monaco-action-bar .action-item {
   background: transparent;
-  border-radius: var(--s3);
+  border-radius: var(--s3) !important;
   transition:
     background var(--easing-timing-fast) var(--easing-curve-in),
     color var(--easing-timing-faster) var(--easing-curve-in);
@@ -808,8 +810,8 @@ html {
 .monaco-action-bar .action-item.checked,
 .monaco-action-bar
   .action-item:hover /*,.monaco-action-bar .action-item.checked .active-item-indicator  */ {
-  background: var(--active-action-item-bg);
-  border-radius: var(--s3);
+  background: var(--active-action-item-bg) !important;
+  border-radius: var(--s3) !important;
 }
 
 .active-item-indicator {
@@ -829,12 +831,12 @@ html {
   .active-item-indicator::before {
   content: "";
   display: block;
-  border: none;
-  height: 20px;
-  width: var(--s3);
+  border: none !important;
+  height: 20px !important;
+  width: var(--s3) !important;
   border-radius: 2px;
-  background-color: var(--accent);
-  top: 50%;
+  background-color: var(--accent) !important;
+  top: 50% !important;
   transform: translateY(-10px) scaleY(0);
   opacity: 0;
   transform-origin: center;
@@ -869,7 +871,7 @@ html {
 }
 
 .activitybar > .content :not(.monaco-menu) > .monaco-action-bar .action-item {
-  display: flex;
+  display: flex !important;
 }
 
 .activitybar.compact
@@ -886,14 +888,14 @@ html {
   > .monaco-action-bar
   .badge
   .badge-content {
-  top: 16px;
-  right: 2px;
-  font-size: 8px;
-  min-width: 8px;
-  height: 12px;
-  line-height: 12px;
-  padding: 0 2px;
-  border-radius: 16px;
+  top: 16px !important;
+  right: 2px !important;
+  font-size: 8px !important;
+  min-width: 8px !important;
+  height: 12px !important;
+  line-height: 12px !important;
+  padding: 0 2px !important;
+  border-radius: 16px !important;
 }
 
 /* Sidebar icons */
@@ -901,10 +903,10 @@ html {
   :not(.monaco-menu)
   > .monaco-action-bar
   .action-label {
-  font-size: 20px;
-  width: var(--s7);
-  height: var(--s7);
-  color: var(--list-item-fg);
+  font-size: 20px !important;
+  width: var(--s7) !important;
+  height: var(--s7) !important;
+  color: var(--list-item-fg) !important;
 }
 
 .activitybar
@@ -925,7 +927,7 @@ html {
   > .monaco-action-bar
   .action-item:hover
   .action-label.codicon {
-  color: var(--foreground);
+  color: var(--foreground) !important;
 }
 
 .activitybar
@@ -933,8 +935,8 @@ html {
   :not(.monaco-menu)
   > .monaco-action-bar
   .action-label:not(.codicon) {
-  mask-size: 20px;
-  background-color: var(--list-item-fg);
+  mask-size: 20px !important;
+  background-color: var(--list-item-fg) !important;
 }
 
 .activitybar
@@ -955,7 +957,7 @@ html {
   > .monaco-action-bar
   .action-item:hover
   .action-label:not(.codicon) {
-  background-color: var(--list-item-fg);
+  background-color: var(--list-item-fg) !important;
 }
 
 .activitybar
@@ -964,29 +966,29 @@ html {
   > .monaco-action-bar
   .badge
   .badge-content {
-  background-color: var(--accent);
+  background-color: var(--accent) !important;
 }
 
 /* Widget */
 .quick-input-widget,
 .editor-widget {
-  background: var(--noise-bg) repeat var(--quick-input-widget-bg);
+  background: var(--noise-bg) repeat var(--quick-input-widget-bg) !important;
   background-blend-mode: exclusion;
   border-radius: var(--border-radius);
-  box-shadow: var(--depth-16);
+  box-shadow: var(--depth-16) !important;
   backdrop-filter: var(--backdrop-filter);
-  color: var(--foreground);
+  color: var(--foreground) !important;
 }
 
 .sticky-widget {
-  background: var(--noise-bg) repeat var(--card-bg);
+  background: var(--noise-bg) repeat var(--card-bg) !important;
   background-blend-mode: exclusion;
   border-top-left-radius: var(--border-radius);
   border-top-right-radius: var(--border-radius);
 }
 
 .sticky-line-root {
-  background: inherit;
+  background: inherit !important;
   border-radius: inherit;
 }
 
@@ -1015,90 +1017,90 @@ html {
 }
 
 .quick-input-widget .monaco-list-rows {
-  background: none;
+  background: none !important;
 }
 
 .quick-input-widget .monaco-list-row.focused {
-  background: var(--list-item-bg);
+  background: var(--list-item-bg) !important;
 }
 
 /* Editor Panel */
 .monaco-editor,
 .monaco-editor-background {
   /* background: var(--noise-bg) repeat var(--editor-bg) !important; */
-  background: transparent;
+  background: transparent !important;
   /* background-blend-mode: exclusion; */
-  border-bottom-left-radius: var(--border-radius);
-  border-bottom-right-radius: var(--border-radius);
+  border-bottom-left-radius: var(--border-radius) !important;
+  border-bottom-right-radius: var(--border-radius) !important;
 }
 
 .monaco-hover,
 .suggest-details,
 .monaco-editor .tree,
 .monaco-editor .details {
-  color: var(--foreground);
-  background: var(--noise-bg) repeat var(--hover-bg);
+  color: var(--foreground) !important;
+  background: var(--noise-bg) repeat var(--hover-bg) !important;
   background-blend-mode: exclusion;
   backdrop-filter: var(--backdrop-filter);
   box-shadow: var(--depth-16);
-  border: var(--border);
+  border: var(--border) !important;
   border-radius: var(--border-radius);
 }
 
 .monaco-hover {
-  padding: var(--s4);
+  padding: var(--s4) !important;
 }
 
 .editor-widget.suggest-widget {
   backdrop-filter: none;
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
 .monaco-editor .scroll-decoration {
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
 .monaco-editor .margin {
-  background: transparent;
+  background: transparent !important;
   border-left: var(--border);
-  border-top-left-radius: var(--border-radius);
-  border-bottom-left-radius: var(--border-radius);
+  border-top-left-radius: var(--border-radius) !important;
+  border-bottom-left-radius: var(--border-radius) !important;
 }
 
 .monaco-editor .view-overlays .current-line,
 .monaco-editor .margin-view-overlays .current-line-margin {
-  background-color: var(--app-bg);
+  background-color: var(--app-bg) !important;
 }
 
 /* Statusbar */
 .statusbar {
   box-shadow: var(--depth-8);
-  background: var(--card-bg);
+  background: var(--card-bg) !important;
   border: var(--border);
   animation: statusBarIn var(--easing-timing-normal) var(--easing-curve-in)
-    forwards;
+    forwards !important;
   animation-delay: 3s;
 }
 
 .monaco-workbench .part.statusbar > .items-container > .statusbar-item {
-  color: var(--foreground);
+  color: var(--foreground) !important;
 }
 
 /* Command Panel */
 
 .monaco-list-rows {
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
 .monaco-list-rows .monaco-list-row {
-  outline: none;
+  outline: none !important;
   border-radius: var(--s3);
 }
 
 .monaco-drag-image,
 .monaco-list:focus .monaco-list-row.selected.focused {
   color: #000000;
-  background: var(--list-item-bg);
+  background: var(--list-item-bg) !important;
 }
 
 /* Input Box */
@@ -1110,13 +1112,13 @@ html {
   .setting-item-contents
   .monaco-select-box,
 .monaco-inputbox.idle {
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.0605);
-  border-top: 1px solid rgba(255, 255, 255, 0.045);
-  border-left: 1px solid rgba(255, 255, 255, 0.045);
-  border-right: 1px solid rgba(255, 255, 255, 0.045);
-  border-bottom: 1px solid var(--border-color);
-  padding: 4px 8px;
+  border-radius: 4px !important;
+  background: rgba(255, 255, 255, 0.0605) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.045) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.045) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.045) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  padding: 4px 8px !important;
   transition: border var(--easing-timing-fast) var(--easing-curve-in);
   box-shadow: var(--depth-2);
 }
@@ -1126,27 +1128,27 @@ html {
   .monaco-inputbox
   > .ibwrapper
   > .input {
-  padding-top: 0;
-  padding-bottom: 0;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 /* Tooltips */
 .workbench-hover {
-  background-color: var(--noise-bg) repeat var(--hover-bg);
+  background-color: var(--noise-bg) repeat var(--hover-bg) !important;
   background-blend-mode: exclusion;
   backdrop-filter: var(--backdrop-filter);
   box-shadow: var(--depth-16);
 }
 
 .workbench-hover:not(.skip-fade-in) {
-  animation: slide-in var(--easing-timing-fast) var(--easing-curve-in) forwards;
+  animation: slide-in var(--easing-timing-fast) var(--easing-curve-in) forwards !important;
 }
 
 /* Remove width and height cap and make custom border */
 .monaco-editor .monaco-resizable-hover > .monaco-hover {
-  height: auto;
-  width: auto;
-  border: 1px solid var(--vscode-editorHoverWidget-border);
+  height: auto !important;
+  width: auto !important;
+  border: 1px solid var(--vscode-editorHoverWidget-border) !important;
 }
 
 /* Remove original border and move upwards to account for padding */
@@ -1172,22 +1174,22 @@ html {
   > *
   + * {
   padding-top: 0.25rem;
-  margin-top: 0.25rem;
+  margin-top: 0.25rem !important;
 }
 
 /* Dropdown container */
 .monaco-select-box-dropdown-container > .select-box-dropdown-list-container {
-  color: var(--foreground);
-  background: var(--noise-bg) repeat var(--hover-bg);
+  color: var(--foreground) !important;
+  background: var(--noise-bg) repeat var(--hover-bg) !important;
   background-blend-mode: exclusion;
-  border: var(--border);
+  border: var(--border) !important;
   border-radius: var(--border-radius);
-  box-shadow: var(--flyout-shadow);
+  box-shadow: var(--flyout-shadow) !important;
   backdrop-filter: var(--backdrop-filter);
 }
 
 .monaco-inputbox.synthetic-focus {
-  border-bottom: 2px solid var(--accent-hover);
+  border-bottom: 2px solid var(--accent-hover) !important;
 }
 
 .monaco-inputbox.idle .wrapper {
@@ -1202,40 +1204,40 @@ html {
 .monaco-workbench .monaco-menu .monaco-action-bar.vertical,
 .context-view.monaco-menu-container,
 .context-view.monaco-menu-container {
-  border: var(--border);
-  box-shadow: var(--flyout-shadow);
-  border-radius: var(--border-radius);
-  background: var(--noise-bg) repeat var(--context-menu-bg);
+  border: var(--border) !important;
+  box-shadow: var(--flyout-shadow) !important;
+  border-radius: var(--border-radius) !important;
+  background: var(--noise-bg) repeat var(--context-menu-bg) !important;
   background-blend-mode: exclusion;
   backdrop-filter: var(--backdrop-filter);
 }
 
 .context-view.monaco-menu-container {
-  animation: fadeIn var(--easing-timing-fast) var(--easing-curve-in);
+  animation: fadeIn var(--easing-timing-fast) var(--easing-curve-in) !important;
 }
 
 .monaco-menu-container .monaco-scrollable-element,
 .monaco-menu-container .monaco-scrollable-element .monaco-menu {
-  box-shadow: none;
-  overflow: inherit;
+  box-shadow: none !important;
+  overflow: inherit !important;
 }
 
 .separator {
-  border-bottom-color: rgba(255, 255, 255, 0.4);
+  border-bottom-color: rgba(255, 255, 255, 0.4) !important;
 }
 
 .context-view .monaco-scrollable-element,
 .context-view .monaco-menu {
-  overflow: unset;
+  overflow: unset !important;
 }
 
 /* Search & Replace */
 .find-widget {
-  width: calc(100% - 32px);
-  height: 42px;
-  max-width: unset;
-  box-shadow: var(--flyout-shadow);
-  transition: transform var(--easing-timing-fast) var(--easing-curve-in);
+  width: calc(100% - 32px) !important;
+  height: 42px !important;
+  max-width: unset !important;
+  box-shadow: var(--flyout-shadow) !important;
+  transition: transform var(--easing-timing-fast) var(--easing-curve-in) !important;
   align-items: center;
 }
 
@@ -1245,49 +1247,49 @@ html {
 }
 
 .find-widget.replaceToggled {
-  height: 86px;
+  height: 86px !important;
 }
 
 .monaco-editor .find-widget.visible {
   left: var(--s4);
-  transform: translateY(var(--s4));
+  transform: translateY(var(--s4)) !important;
 }
 
 /* Notifications */
 
 .notifications-toasts,
 .notifications-toasts .notification-toast-container {
-  overflow: unset;
+  overflow: unset !important;
 }
 
 .monaco-workbench .notifications-list-container .notification-list-item,
 .notification-toast,
 .notifications-center {
   backdrop-filter: var(--backdrop-filter);
-  background: var(--noise-bg) repeat var(--notification-toast-bg);
+  background: var(--noise-bg) repeat var(--notification-toast-bg) !important;
   background-blend-mode: exclusion;
   border-radius: var(--notification-border-radius);
-  box-shadow: var(--flyout-shadow);
+  box-shadow: var(--flyout-shadow) !important;
 }
 
 .monaco-workbench .notifications-list-container .notification-list-item {
-  padding: var(--s4) var(--s3);
+  padding: var(--s4) var(--s3) !important;
 }
 
 /* Notification Panel */
 .notifications-center {
-  background: var(--noise-bg) repeat var(--background-color);
+  background: var(--noise-bg) repeat var(--background-color) !important;
   background-blend-mode: exclusion;
   backdrop-filter: var(--backdrop-filter);
 }
 
 .notifications-list-container {
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
 .notification-toast {
-  border: var(--border);
-  background: transparent;
+  border: var(--border) !important;
+  background: transparent !important;
   transition: var(--notification-transition);
 }
 
@@ -1295,27 +1297,27 @@ html {
 .feedback-form {
   backdrop-filter: var(--backdrop-filter);
   background-blend-mode: exclusion;
-  background-color: var(--background-color);
+  background-color: var(--background-color) !important;
 }
 
 /* Minimap */
 .minimap {
   backdrop-filter: var(--backdrop-filter);
   background-blend-mode: exclusion;
-  left: unset;
+  left: unset !important;
   right: 25px;
   z-index: 12;
 }
 
 .minimap canvas {
-  background: transparent;
+  background: transparent !important;
 }
 
 .monaco-editor .vertical,
 canvas.decorationsOverviewRuler {
-  right: 1rem;
-  border-top-right-radius: var(--border-radius);
-  border-bottom-right-radius: var(--border-radius);
+  right: 1rem !important;
+  border-top-right-radius: var(--border-radius) !important;
+  border-bottom-right-radius: var(--border-radius) !important;
 }
 
 /* Vertical Scroll Bar */
@@ -1330,7 +1332,7 @@ canvas.decorationsOverviewRuler {
 }
 
 .setting-item-contents.settings-row-inner-container:hover {
-  background-color: var(--list-item-bg);
+  background-color: var(--list-item-bg) !important;
 }
 
 .settings-editor
@@ -1338,7 +1340,7 @@ canvas.decorationsOverviewRuler {
   > .settings-tree-container
   .monaco-list-row.focused
   .settings-row-inner-container {
-  background-color: var(--list-item-bg);
+  background-color: var(--list-item-bg) !important;
 }
 
 .settings-editor
@@ -1349,26 +1351,26 @@ canvas.decorationsOverviewRuler {
   > .settings-body
   > .settings-tree-container
   .monaco-list-row:hover {
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
 .suggest-input-container {
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
 /* Breadcrumbs Picker */
 .monaco-breadcrumbs-picker > div:nth-child(2) {
   backdrop-filter: var(--backdrop-filter);
   background-blend-mode: exclusion;
-  background-color: var(--background-color);
+  background-color: var(--background-color) !important;
 }
 
 .scm-view .monaco-list-row .scm-input {
-  line-height: 22px;
+  line-height: 22px !important;
 }
 
 .monaco-pane-view .pane > .pane-header {
-  background: transparent;
+  background: transparent !important;
 }
 
 .codicon {
@@ -1443,30 +1445,30 @@ canvas.decorationsOverviewRuler {
 }
 
 .split-view-container .split-view-view .pane-composite-part {
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 .monaco-scrollable-element .split-view-view .centered-layout-margin {
-  opacity: 0;
+  opacity: 0 !important;
 }
 
 .monaco-icon-label:after {
-  margin-top: 0;
+  margin-top: 0 !important;
 }
 .monaco-tl-contents .monaco-icon-label:after {
-  margin-left: 0;
+  margin-left: 0 !important;
 }
 
 .monaco-scrollable-element .split-view-view .editor-container {
-  border-bottom-left-radius: var(--border-radius);
-  border-bottom-right-radius: var(--border-radius);
+  border-bottom-left-radius: var(--border-radius) !important;
+  border-bottom-right-radius: var(--border-radius) !important;
 }
 
 /* Creating File/Directory input box  */
 .explorer-folders-view .explorer-item .monaco-inputbox {
-  padding-top: 0;
-  padding-bottom: 0;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 /* Single Tab mode titlebar */
@@ -1474,10 +1476,10 @@ canvas.decorationsOverviewRuler {
   > .content
   .editor-group-container
   > .title:not(.tabs) {
-  background: var(--card-bg);
-  padding-right: var(--s5);
+  background: var(--card-bg) !important;
+  padding-right: var(--s5) !important;
   > .label-container .monaco-breadcrumbs {
-    background-color: transparent;
+    background-color: transparent !important;
   }
 }
 

@@ -83,14 +83,26 @@ const watchForBootstrap = (mutationsList, observer2) => {
 
       // Everything we need is ready, so initialise
       if (tokensLoaded) {
-        initFluentUi([IS_COMPACT], [LIGHT_BG], [DARK_BG], [ACCENT], observer2);
+        initFluentDesign(
+          [IS_COMPACT],
+          [LIGHT_BG],
+          [DARK_BG],
+          [ACCENT],
+          observer2,
+        );
       }
     }
   }
 };
 
 // Add custom styles
-const initFluentUi = (isCompact, lightBgColor, darkBgColor, accent, obs) => {
+const initFluentDesign = (
+  isCompact,
+  lightBgColor,
+  darkBgColor,
+  accent,
+  obs,
+) => {
   isLayoutCompact = isCompact;
   accentColor = accent;
   accentHover = `${accent}e6`;
@@ -385,7 +397,7 @@ const applyCompactStyles = () => {
 };
 
 // try to initialise the theme
-initFluentUi([IS_COMPACT], [LIGHT_BG], [DARK_BG], [ACCENT]);
+initFluentDesign([IS_COMPACT], [LIGHT_BG], [DARK_BG], [ACCENT]);
 
 // Use a mutation observer to check when we can bootstrap the theme
 const observer = new MutationObserver(watchForBootstrap);
