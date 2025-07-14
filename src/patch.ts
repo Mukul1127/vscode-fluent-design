@@ -1,7 +1,11 @@
+/** biome-ignore-all lint/nursery/noUnresolvedImports: ESBuild and VSCode should show failures if any of these are amiss and biome's implementation is a *bit* overzealous */
+/** biome-ignore-all lint/nursery/noSecrets: Biome seems to think our extenion's config is a environment file? */
+/** biome-ignore-all lint/performance/useTopLevelRegex: The patch() function is only called when installing, updating, or removing the fluent design patch. */
+
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
-import * as vscode from "vscode";
+import { window, workspace } from "vscode";
 import { messages } from "./messages.js";
 
 /**
@@ -14,14 +18,15 @@ async function generateBluredBackgroundImage(
   wallpaperPath: string,
 ): Promise<string | null> {
   try {
+    const blurValue = 100;
     const blurredImage = await sharp(wallpaperPath)
-      .blur(100)
+      .blur(blurValue)
       .toFormat("avif")
       .toBuffer();
     return `data:image/avif;base64,${blurredImage.toString("base64")}`;
   } catch (error) {
-    vscode.window.showErrorMessage(String(error));
-    vscode.window.showInformationMessage(messages.admin);
+    window.showErrorMessage(String(error));
+    window.showInformationMessage(messages.admin);
     return null;
   }
 }
@@ -32,13 +37,13 @@ async function generateBluredBackgroundImage(
  * @param {string} url The URL to load the CSS from.
  * @returns {Promise<string | null>} A promise that resolves the CSS if no error occured and `null` otherwise.
  */
-async function getCSSTag(url: string): Promise<string | null> {
+async function getCssTag(url: string): Promise<string | null> {
   try {
     const fileName = fileURLToPath(import.meta.resolve(url));
-    const fileContent = await readFile(fileName);
+    const fileContent = await readFile(fileName, { encoding: "utf-8" });
     return `<style>${fileContent}</style>\n`;
   } catch (error) {
-    vscode.window.showErrorMessage(String(error));
+    window.showErrorMessage(String(error));
     return null;
   }
 }
@@ -48,13 +53,13 @@ async function getCSSTag(url: string): Promise<string | null> {
  *
  * @returns {string} A promise that resolves the css tag.
  */
-async function buildCSSTag(): Promise<string> {
-  const config = vscode.workspace.getConfiguration("vscode-fluent-design");
+async function buildCssTag(): Promise<string> {
+  const config = workspace.getConfiguration("vscode-fluent-design");
 
-  const activeTheme = vscode.window.activeColorTheme;
+  const activeTheme = window.activeColorTheme;
   const isDark = activeTheme.kind === 2;
   const enableBg = config.get<boolean>("enableWallpaper", false);
-  const bgURL = config.get<string>("wallpaperPath", "");
+  const bgUrl = config.get<string>("wallpaperPath", "");
 
   const accent = `${config.get<string>("accent", "#005fb8")}`;
   const darkBgColor = `${config.get<string>("darkBackground", "#202020")}b3`;
@@ -63,36 +68,39 @@ async function buildCSSTag(): Promise<string> {
   let encodedImage: string | null = null;
 
   if (enableBg) {
-    encodedImage = await generateBluredBackgroundImage(bgURL);
+    encodedImage = await generateBluredBackgroundImage(bgUrl);
   }
-
-  let res = "";
 
   const styles = ["./css/editor_chrome.css"];
   if (isDark) {
     styles.push("./css/dark_vars.css");
   }
 
-  for (const url of styles) {
-    let imp = await getCSSTag(url);
+  const cssTags = await Promise.all(
+    styles.map(async (url) => {
+      const imp = await getCssTag(url);
+      if (!imp) {
+        return "";
+      }
 
-    if (imp) {
+      let result = imp;
       if (url.includes("dark")) {
-        imp = imp.replace("CARD_DARK_BG_COLOR", darkBgColor);
+        result = result.replace("CARD_DARK_BG_COLOR", darkBgColor);
       } else {
-        imp = imp.replace("CARD_LIGHT_BG_COLOR", lightBgColor);
-        imp = imp.replace("ACCENT_COLOR", accent);
+        result = result
+          .replace("CARD_LIGHT_BG_COLOR", lightBgColor)
+          .replace("ACCENT_COLOR", accent);
       }
 
-      if (!enableBg) {
-        imp = imp.replace("APP_BG", "transparent");
-      } else {
-        imp = imp.replace("APP_BG", "var(--card-bg)");
-      }
+      result = result.replace(
+        "APP_BG",
+        enableBg ? "var(--card-bg)" : "transparent",
+      );
+      return result;
+    }),
+  );
 
-      res += imp;
-    }
-  }
+  let res = cssTags.join("");
 
   if (encodedImage) {
     // Replace --app-bg value on res
@@ -109,7 +117,7 @@ async function buildCSSTag(): Promise<string> {
  */
 async function buildJavaScriptTag(): Promise<string> {
   try {
-    const config = vscode.workspace.getConfiguration("vscode-fluent-design");
+    const config = workspace.getConfiguration("vscode-fluent-design");
 
     const isCompact = config.get<string>("compact");
     const accent = config.get<string>("accent");
@@ -118,7 +126,7 @@ async function buildJavaScriptTag(): Promise<string> {
 
     let jsTemplate = await readFile(
       fileURLToPath(import.meta.resolve("./js/theme_template.js")),
-      "utf-8"
+      "utf-8",
     );
 
     jsTemplate = jsTemplate.replace(/\[IS_COMPACT\]/g, String(isCompact));
@@ -129,7 +137,7 @@ async function buildJavaScriptTag(): Promise<string> {
     const tag = `<script>${jsTemplate}</script>`;
     return tag;
   } catch (error) {
-    vscode.window.showErrorMessage(String(error));
+    window.showErrorMessage(String(error));
     return "";
   }
 }
@@ -141,17 +149,17 @@ async function buildJavaScriptTag(): Promise<string> {
  * @returns {Promise<void>} A promise that resolves when the patching completed.
  */
 export async function patch(workbenchPath: string): Promise<void> {
-  let html = await readFile(workbenchPath, "utf-8");
-
-  const cssTag = await buildCSSTag();
-  html = html.replace(/(<\/head>)/, `\n${cssTag}\n</head>`);
-
-  const javaScriptTag = await buildJavaScriptTag();
-  html = html.replace(/(<\/html>)/, `\n${javaScriptTag}\n</html>`);
-
   try {
-    await writeFile(workbenchPath, html, "utf-8");
+    let html = await readFile(workbenchPath, { encoding: "utf-8" });
+
+    const cssTag = await buildCssTag();
+    html = html.replace(/(<\/head>)/, `\n${cssTag}\n</head>`);
+
+    const javaScriptTag = await buildJavaScriptTag();
+    html = html.replace(/(<\/html>)/, `\n${javaScriptTag}\n</html>`);
+
+    await writeFile(workbenchPath, html, { encoding: "utf-8" });
   } catch (error) {
-    vscode.window.showErrorMessage(String(error));
+    window.showErrorMessage(String(error));
   }
 }

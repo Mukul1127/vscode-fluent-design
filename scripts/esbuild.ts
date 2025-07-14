@@ -1,15 +1,17 @@
+/** biome-ignore-all lint/nursery/noUnresolvedImports: VSCode should show failures if any of these are amiss and biome's implementation is a *bit* overzealous */
+
+import process from "node:process";
 import type { BuildOptions } from "esbuild";
 import esbuild from "esbuild";
 
-const production = process.argv.includes("--production");
-const watch = process.argv.includes("--watch");
+const production: boolean = process.argv.includes("--production");
+const watch: boolean = process.argv.includes("--watch");
 
 const contexts: BuildOptions[] = [
   {
     entryPoints: ["src/extension.ts"],
     bundle: true,
     platform: "node",
-    target: "node16",
     format: "esm",
     outdir: "./dist",
     outbase: "./src",
@@ -46,11 +48,9 @@ async function buildAll(): Promise<void> {
 
   if (watch) {
     await Promise.all(ctxs.map((ctx) => ctx.watch()));
-    console.log("Watching for changes. Press Ctrl+C to stop.");
 
     // Handle graceful shutdown
-    const cleanup = async () => {
-      console.log("Stopping...");
+    const cleanup = async (): Promise<void> => {
       await Promise.all(ctxs.map((ctx) => ctx.dispose()));
       process.exit(0);
     };
@@ -64,11 +64,11 @@ async function buildAll(): Promise<void> {
         await ctx.dispose();
       }),
     );
-    console.log("Build complete.");
   }
 }
 
 buildAll().catch((error) => {
+  // biome-ignore lint/suspicious/noConsole: This is not shipped code, this tool is only used to bundle.
   console.error(error);
   process.exit(1);
 });

@@ -18,6 +18,7 @@ const debounce = (callback, time) => {
 const resizeObserver = new ResizeObserver((entries) => {
   for (const entry of entries) {
     if (entry.contentBoxSize) {
+      // biome-ignore lint/nursery/noMagicNumbers: Goddamit it's just a reasonable value for a setTimeout()
       debounce(applyCompactStyles, 300);
     }
   }
@@ -26,6 +27,7 @@ const resizeObserver = new ResizeObserver((entries) => {
 const watchLayout = (mutationsList) => {
   for (const mutation of mutationsList) {
     if (mutation.type === "childList") {
+      // biome-ignore lint/nursery/noMagicNumbers: Goddamit it's just a reasonable value for a setTimeout()
       debounce(applyCompactStyles, 300);
     }
   }
@@ -34,7 +36,6 @@ const watchLayout = (mutationsList) => {
 const watchAttributes = (mutationsList) => {
   for (const mutation of mutationsList) {
     if (mutation.type === "attributes") {
-      console.log("Attribute changed on chromium");
       const chromium = document.querySelector("div.chromium");
 
       const { classList } = chromium;
@@ -52,6 +53,7 @@ const watchAttributes = (mutationsList) => {
 const watchSplitViewChildren = (mutationsList) => {
   for (const mutation of mutationsList) {
     if (mutation.type === "childList") {
+      // biome-ignore lint/nursery/noMagicNumbers: Goddamit it's just a reasonable value for a setTimeout()
       debounce(adjustScrollableWidth, 180);
     }
   }
@@ -59,7 +61,7 @@ const watchSplitViewChildren = (mutationsList) => {
 const editorChildrenObserver = new MutationObserver(watchSplitViewChildren);
 
 // Callback function to execute when mutations are observed
-const watchForBootstrap = (mutationsList, observer) => {
+const watchForBootstrap = (mutationsList, observer2) => {
   for (const mutation of mutationsList) {
     if (mutation.type === "attributes") {
       // does the style div exist yet?
@@ -70,8 +72,8 @@ const watchForBootstrap = (mutationsList, observer) => {
 
       // sometimes VS code takes a while to init the styles content, so stop this observer and add an observer for that
       if (tokensLoaded) {
-        observer.disconnect();
-        observer.observe(tokensLoaded, { childList: true });
+        observer2.disconnect();
+        observer2.observe(tokensLoaded, { childList: true });
       }
     }
 
@@ -81,14 +83,14 @@ const watchForBootstrap = (mutationsList, observer) => {
 
       // Everything we need is ready, so initialise
       if (tokensLoaded) {
-        initFluentUI([IS_COMPACT], [LIGHT_BG], [DARK_BG], [ACCENT], observer);
+        initFluentUi([IS_COMPACT], [LIGHT_BG], [DARK_BG], [ACCENT], observer2);
       }
     }
   }
 };
 
 // Add custom styles
-const initFluentUI = (isCompact, lightBgColor, darkBgColor, accent, obs) => {
+const initFluentUi = (isCompact, lightBgColor, darkBgColor, accent, obs) => {
   isLayoutCompact = isCompact;
   accentColor = accent;
   accentHover = `${accent}e6`;
@@ -96,7 +98,7 @@ const initFluentUI = (isCompact, lightBgColor, darkBgColor, accent, obs) => {
   darkBg = darkBgColor;
   lightBg = lightBgColor;
 
-  var themeStyleTag = document.querySelector(".vscode-tokens-styles");
+  const themeStyleTag = document.querySelector(".vscode-tokens-styles");
 
   if (!themeStyleTag) {
     return;
@@ -121,8 +123,6 @@ const initFluentUI = (isCompact, lightBgColor, darkBgColor, accent, obs) => {
   if (isLayoutCompact) {
     const sidebarContainer = sidebar.parentElement;
     const editorContainer = document.querySelector(".editor-container");
-
-    console.log("Attaching resize observers");
     // Mutation observer to check layout changes and apply corresponding classes
     const layoutObserver = new MutationObserver(watchLayout);
     layoutObserver.observe(splitViewContainer, { childList: true });
@@ -143,8 +143,6 @@ const initFluentUI = (isCompact, lightBgColor, darkBgColor, accent, obs) => {
     value: "var(--wallpaper)",
   });
 
-  console.log("Fluent Design Patch: Initialised!");
-
   // disconnect the observer because we don't need it anymore
   if (obs) {
     obs.disconnect();
@@ -155,10 +153,10 @@ const overrideDocumentStyle = ({ property, value }) => {
   document.documentElement.style.setProperty(property, value);
 };
 
+// biome-ignore lint/nursery/noExcessiveLinesPerFunction: bruh
 const applyDarkStyles = () => {
   try {
-    console.log("Applying dark styles");
-    // Yeap, I have to override each one individually until VSCode allows me to dynamically
+    // Yep, I have to override each one individually until VSCode allows me to dynamically
     overrideDocumentStyle({ property: "--accent", value: accentColor });
     overrideDocumentStyle({ property: "--accent-hover", value: accentHover });
     overrideDocumentStyle({
@@ -185,9 +183,6 @@ const applyDarkStyles = () => {
       property: "--active-action-item-bg",
       value: "var(--card-bg)",
     });
-    // overrideDocumentStyle({ property: '--activitybar-indicator-bg', value: '#60cdff' });
-    // overrideDocumentStyle({ property: '--app-bg', value:
-    // 'var(--card-bg)' });
     overrideDocumentStyle({
       property: "--app-bg",
       value: "rgba(44, 44, 44, 0.85)",
@@ -237,15 +232,13 @@ const applyDarkStyles = () => {
       property: "background",
       value: "var(--wallpaper)",
     });
-  } catch (error) {
-    console.error(error);
-  }
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: We just want to catch any error
+  } catch {}
 };
 
+// biome-ignore lint/nursery/noExcessiveLinesPerFunction: bruh
 const applyLightStyles = () => {
   try {
-    console.log("Applying light styles");
-    console.log("Current accent", accentColor);
     // Yeap, I have to override each one individually until VSCode allows me to dynamically add <style> tags to the document
     overrideDocumentStyle({ property: "--accent", value: accentColor });
     overrideDocumentStyle({ property: "--accent-hover", value: accentHover });
@@ -311,45 +304,43 @@ const applyLightStyles = () => {
       property: "background",
       value: "var(--wallpaper)",
     });
-  } catch (error) {
-    console.error(error);
-  }
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: We just want to catch any error
+  } catch {}
 };
 
 const adjustScrollableWidth = () => {
   const overflowGuards = document.querySelectorAll(".overflow-guard");
 
-  overflowGuards.forEach((element) => {
+  for (const element of overflowGuards) {
     const width = element.offsetWidth;
+    // biome-ignore lint/nursery/noMagicNumbers: It's just minus 4
     element.style.width = `${width - 4}px`;
-  });
+  }
 
   setTimeout(() => {
     const minimaps = [...document.querySelectorAll(".minimap")];
 
     if (minimaps.length > 1) {
       const notLastMinimaps = minimaps.slice(0, -1);
-      notLastMinimaps.forEach((minimap) => {
+      for (const minimap of notLastMinimaps) {
         minimap.style.setProperty("right", "13px", "important");
-      });
+      }
     }
 
     const decorationsOverviewRulers = [
+      // biome-ignore lint/nursery/noSecrets: This is just a css selector? No secret here
       ...document.querySelectorAll(".decorationsOverviewRuler"),
     ];
 
     if (decorationsOverviewRulers.length > 1) {
       const notLastRulers = decorationsOverviewRulers.slice(0, -1);
-      notLastRulers.forEach((ruler) => {
+      for (const ruler of notLastRulers) {
         ruler.style.setProperty("right", "4px", "important");
-      });
+      }
     }
+    // biome-ignore lint/nursery/noMagicNumbers: This is just a reasonable time to wait between each loop, no need for a variable.
   }, 1000);
 };
-
-// document.addEventListener('DOMContentLoaded', () => {
-//     adjustScrollableWidth();
-// });
 
 const applyCompactStyles = () => {
   const sidebar = document.querySelector(".sidebar");
@@ -394,7 +385,7 @@ const applyCompactStyles = () => {
 };
 
 // try to initialise the theme
-initFluentUI([IS_COMPACT], [LIGHT_BG], [DARK_BG], [ACCENT]);
+initFluentUi([IS_COMPACT], [LIGHT_BG], [DARK_BG], [ACCENT]);
 
 // Use a mutation observer to check when we can bootstrap the theme
 const observer = new MutationObserver(watchForBootstrap);

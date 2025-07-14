@@ -1,7 +1,8 @@
-import { glob, rm, unlink } from "node:fs/promises";
-import path from "node:path";
+/** biome-ignore-all lint/nursery/noUnresolvedImports: VSCode should show failures if any of these are amiss and biome's implementation is a *bit* overzealous */
 
-const pkg = await import(path.join(process.cwd(), "package.json"));
+import { glob, rm, unlink } from "node:fs/promises";
+
+import packageJson from "../package.json" with { type: "json" };
 
 // Delete dist directory
 try {
@@ -16,6 +17,6 @@ try {
 }
 
 // Delete VSIXs
-for await (const path of glob(`${pkg.name}-*.vsix`)) {
-  await unlink(path);
+for await (const globPath of glob(`${packageJson.name}-*.vsix`)) {
+  await unlink(globPath);
 }

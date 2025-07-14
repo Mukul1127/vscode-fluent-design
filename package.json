@@ -82,10 +82,10 @@
 		"clean": "bun scripts/clean.ts",
 		"package": "bun clean && bun compile --production && vsce package",
 		"check": "tsc --noEmit",
-		"format": "biome format --write",
-		"lint": "biome lint --write",
-		"assist": "biome check --write --formatter-enabled=false --linter-enabled=false",
-		"all": "tsc --noEmit && biome check --write"
+		"format": "biome format --write --unsafe",
+		"lint": "biome lint --write --unsafe",
+		"assist": "biome check --write --unsafe --formatter-enabled=false --linter-enabled=false",
+		"all": "tsc --noEmit && biome check --write --unsafe"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.1.1",

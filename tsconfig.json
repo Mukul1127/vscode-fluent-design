@@ -1,15 +1,17 @@
 {
 	"compilerOptions": {
-		"module": "Node16",
-		"target": "ES2022",
-		"lib": ["ES2022"],
+		"module": "nodenext",
+		"target": "esnext",
+		"lib": ["ESNext"],
 
 		"sourceMap": true,
 
 		"strict": true,
 		"noImplicitReturns": true,
 		"noFallthroughCasesInSwitch": true,
-		"noUnusedParameters": true
+		"noUnusedParameters": true,
+
+		"resolveJsonModule": true
 	},
 	"include": ["src", "scripts"]
 }

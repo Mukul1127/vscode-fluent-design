@@ -1,5 +1,7 @@
+/** biome-ignore-all lint/nursery/noUnresolvedImports: ESBuild and VSCode should show failures if any of these are amiss and biome's implementation is a *bit* overzealous */
+
 import { constants, copyFile, unlink } from "node:fs/promises";
-import * as vscode from "vscode";
+import { window } from "vscode";
 import { messages } from "./messages.js";
 
 /**
@@ -14,11 +16,10 @@ export async function createBackup(
   backupFilePath: string,
 ): Promise<boolean> {
   try {
-    // COPYFILE_EXCL ensures the backup won't be created if it already exists.
     await copyFile(originalFilePath, backupFilePath, constants.COPYFILE_EXCL);
     return true;
   } catch (error) {
-    vscode.window.showErrorMessage(messages.backupFailed + String(error));
+    window.showErrorMessage(messages.backupFailed + String(error));
     return false;
   }
 }
@@ -39,18 +40,13 @@ export async function restoreBackup(
   keepBackup?: boolean,
 ): Promise<boolean> {
   try {
-    // COPYFILE_FICLONE overwrites the original file if it exists, creating it otherwise.
-    await copyFile(
-      backupFilePath,
-      originalFilePath,
-      constants.COPYFILE_FICLONE,
-    );
+    await copyFile(backupFilePath, originalFilePath);
     if (!keepBackup) {
       await unlink(backupFilePath);
     }
     return true;
   } catch (error) {
-    vscode.window.showErrorMessage(messages.backupFailed + String(error));
+    window.showErrorMessage(messages.backupFailed + String(error));
     return false;
   }
 }
