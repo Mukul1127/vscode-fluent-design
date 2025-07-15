@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/nursery/noUnresolvedImports: ESBuild and VSCode should show failures if any of these are amiss and biome's implementation is a *bit* overzealous */
+/** biome-ignore-all lint/nursery/noExcessiveLinesPerFunction: <explanation> */
 /** biome-ignore-all lint/nursery/noSecrets: Biome seems to think our extenion's config is a environment file? */
 /** biome-ignore-all lint/performance/useTopLevelRegex: The patch() function is only called when installing, updating, or removing the fluent design patch. */
 
@@ -51,15 +52,19 @@ async function getCssTag(url: string): Promise<string | null> {
 /**
  * Builds the CSS tag.
  *
- * @returns {string} A promise that resolves the css tag.
+ * @returns {Promise<string | null>} A promise that resolves the css tag.
  */
-async function buildCssTag(): Promise<string> {
+async function buildCssTag(): Promise<string | null> {
   const config = workspace.getConfiguration("vscode-fluent-design");
 
-  const activeTheme = window.activeColorTheme;
-  const isDark = activeTheme.kind === 2;
-  const enableBg = config.get<boolean>("enableWallpaper", false);
+  const isDark = window.activeColorTheme.kind === 2;
+  const enableBg = config.get<boolean>("enableWallpaper");
   const bgUrl = config.get<string>("wallpaperPath", "");
+
+  if (!bgUrl) {
+    window.showErrorMessage(messages.invalidBackgroundPath);
+    return null;
+  }
 
   const accent = `${config.get<string>("accent")}`;
   const darkBgColor = `${config.get<string>("darkBackground")}b3`;
@@ -78,25 +83,28 @@ async function buildCssTag(): Promise<string> {
 
   const cssTags = await Promise.all(
     styles.map(async (url) => {
-      const imp = await getCssTag(url);
-      if (!imp) {
-        return "";
+      let tag = await getCssTag(url);
+      if (!tag) {
+        window.showErrorMessage(messages.invalidCssTag);
+        return null;
       }
 
-      let result = imp;
       if (url.includes("dark")) {
-        result = result.replace("CARD_DARK_BG_COLOR", darkBgColor);
+        // dark_vars.css
+        tag = tag.replace("CARD_DARK_BG_COLOR", darkBgColor);
       } else {
-        result = result
+        // editor_chrome.css
+        tag = tag
           .replace("CARD_LIGHT_BG_COLOR", lightBgColor)
           .replace("ACCENT_COLOR", accent);
       }
 
-      result = result.replace(
+      tag = tag.replace(
         "APP_BG",
         enableBg ? "var(--card-bg)" : "transparent",
       );
-      return result;
+
+      return tag;
     }),
   );
 

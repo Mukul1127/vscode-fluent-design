@@ -17,13 +17,8 @@ export async function locateWorkbench(): Promise<string | null> {
   const basePath = path.join(env.appRoot, "out", "vs", "code");
 
   const candidateWorkbenchDirectories = [
-    // old path
-    "electron-sandbox",
-    path.join("electron-sandbox", "workbench"),
-
-    // v1.102+ path
-    "electron-browser",
-    path.join("electron-browser", "workbench"),
+    "electron-sandbox", // pre-v1.102 path
+    "electron-browser", // post-v1.102 path
   ];
 
   const candidateHtmlFiles = [
@@ -32,27 +27,29 @@ export async function locateWorkbench(): Promise<string | null> {
     "workbench-dev.html", // VSCode dev
   ];
 
+  // Get list of candidate paths.
   const candidatePaths = candidateWorkbenchDirectories.flatMap((dir) =>
     candidateHtmlFiles.map((file) => path.join(basePath, dir, file)),
   );
 
+  // Make array of Promises that ensures path is correct before returning path, null otherwise.
   const candidatePromises: Promise<string>[] = candidatePaths.map(
     async (candidatePath) => {
       try {
         const statResult = await stat(candidatePath);
         if (statResult.isDirectory()) {
           // As far as I know, there *should* never be a directory with a .html suffix.
-          window.showInformationMessage(
-            messages.isDirectoryNotFile(candidatePath),
-          );
-          throw new Error(messages.isDirectoryNotFile(candidatePath));
+          const customError = new Error(messages.isDirectoryNotFile(candidatePath));
+          window.showErrorMessage(String(customError));
+          throw customError;
         }
 
         return candidatePath;
       } catch (error) {
         if (!(error instanceof Error)) {
-          window.showErrorMessage(messages.errorNotInstanceOfError(error));
-          throw error;
+          const customError = new Error(messages.errorNotInstanceOfError(error));
+          window.showErrorMessage(String(customError));
+          throw customError;
         }
         if (error.code !== "ENOENT") {
           // As long as the error is not "file not found", we should log it.
@@ -65,6 +62,7 @@ export async function locateWorkbench(): Promise<string | null> {
     },
   );
 
+  // Run all promises at once and return the first promies that succeeds.
   try {
     const result = await Promise.any(candidatePromises);
     return result;

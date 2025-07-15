@@ -6,6 +6,8 @@ interface Messages {
   backupFailed: (error: Error) => string;
   errorNotInstanceOfError: (error: unknown) => string;
   workbenchPathLookupFailed: string;
+  invalidBackgroundPath: string;
+  invalidCssTag: string;
   installed: string;
   notInstalled: string;
   enabled: string;
@@ -21,6 +23,8 @@ export const messages: Messages = {
   errorNotInstanceOfError: (error: unknown) =>
     `${typeof error} is not an instance of Error.`,
   workbenchPathLookupFailed: `Unable to locate VSCode's workbench html file.`,
+  invalidBackgroundPath: "Unable to retrieve user-specified background path.",
+  invalidCssTag: "Got invalid CSS tag.", 
   installed:
     "This command can only be used when Fluent Design is not installed.",
   notInstalled:
