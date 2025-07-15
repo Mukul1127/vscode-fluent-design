@@ -53,8 +53,8 @@ export async function locateWorkbench(): Promise<string | null> {
   const basePath = path.join(env.appRoot, "out", "vs", "code");
 
   const candidateWorkbenchDirectories = [
-    "electron-sandbox", // pre-v1.102 path
-    "electron-browser", // post-v1.102 path
+    path.join("electron-sandbox", "workbench"), // pre-v1.102 path
+    path.join("electron-browser", "workbench"), // post-v1.102 path
   ];
 
   const candidateHtmlFiles = [
