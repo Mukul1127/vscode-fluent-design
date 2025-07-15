@@ -1,27 +1,10 @@
-/** biome-ignore-all lint/nursery/noUnresolvedImports: ESBuild and VSCode should show failures if any of these are amiss and biome's implementation is a *bit* overzealous */
-
-interface Messages {
-  workbenchPathFailedStat: (path: string) => string;
-  isDirectoryNotFile: (path: string) => string;
-  backupFailed: (error: Error) => string;
-  errorNotInstanceOfError: (error: unknown) => string;
-  workbenchPathLookupFailed: string;
-  invalidBackgroundPath: string;
-  invalidCssTag: string;
-  installed: string;
-  notInstalled: string;
-  enabled: string;
-  disabled: string;
-  admin: string;
-}
-
-export const messages: Messages = {
-  workbenchPathFailedStat: (path: string) =>
-    `Failed to check workbench path: ${path}`,
-  isDirectoryNotFile: (path: string) => `${path} is a directory, not a file.`,
-  backupFailed: (error: Error) => `Failed to copy backup: ${error}`,
-  errorNotInstanceOfError: (error: unknown) =>
-    `${typeof error} is not an instance of Error.`,
+export const messages = {
+  workbenchPathFailedStat: (path: string, error: Error): string =>
+    `Failed to check workbench path ${path} with error ${error}`,
+  isDirectoryNotFile: (path: string): string => `${path} is a directory, not a file.`,
+  backupFailed: (error: Error): string => `Failed to copy backup: ${error}`,
+  errorNotInstanceOfError: (error: unknown): string =>
+    `Thrown Error ${typeof error} is not an instance of Error.`,
   workbenchPathLookupFailed: `Unable to locate VSCode's workbench html file.`,
   invalidBackgroundPath: "Unable to retrieve user-specified background path.",
   invalidCssTag: "Got invalid CSS tag.", 

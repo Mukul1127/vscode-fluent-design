@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/nursery/noUnresolvedImports: ESBuild and VSCode should show failures if any of these are amiss and biome's implementation is a *bit* overzealous */
-/** biome-ignore-all lint/nursery/noExcessiveLinesPerFunction: <explanation> */
+/** biome-ignore-all lint/nursery/noExcessiveLinesPerFunction: Fix later */
 /** biome-ignore-all lint/nursery/noSecrets: Biome seems to think our extenion's config is a environment file? */
 /** biome-ignore-all lint/performance/useTopLevelRegex: The patch() function is only called when installing, updating, or removing the fluent design patch. */
 
