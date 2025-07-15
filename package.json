@@ -77,10 +77,9 @@
 	},
 	"scripts": {
 		"dev": "echo 'Open extension.ts in VSCode and then run your extension with F5",
-		"compile": "bun scripts/esbuild.ts",
-		"watch": "bun scripts/esbuild.ts --watch",
-		"clean": "bun scripts/clean.ts",
-		"package": "bun clean && bun compile --production && vsce package",
+		"compile": "tsdown --silent --sourcemap",
+		"watch": "tsdown --silent -w --sourcemap",
+		"package": "tsdown --silent --minify && vsce package",
 		"check": "tsc --noEmit",
 		"format": "biome format --write --unsafe",
 		"lint": "biome lint --write --unsafe",
@@ -92,7 +91,7 @@
 		"@types/node": "24.0.13",
 		"@types/vscode": "1.93.0",
 		"@vscode/vsce": "3.6.0",
-		"esbuild": "0.25.6",
+		"tsdown": "0.12.9",
 		"typescript": "5.8.3"
 	},
 	"dependencies": {
