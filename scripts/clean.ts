@@ -1,6 +1,6 @@
 import { glob, rm, unlink } from "node:fs/promises";
 
-import packageJson from "../package.json" with { type: "json" };
+import pkg from "../package.json" with { type: "json" };
 
 // Delete dist directory
 try {
@@ -15,6 +15,6 @@ try {
 }
 
 // Delete VSIXs
-for await (const globPath of glob(`${packageJson.name}-*.vsix`)) {
+for await (const globPath of glob(`${pkg.name}-*.vsix`)) {
   await unlink(globPath);
 }

@@ -81,7 +81,7 @@
 		"watch": "bun scripts/esbuild.ts --watch",
 		"clean": "bun scripts/clean.ts",
 		"package": "bun clean && bun compile --production && vsce package",
-		"check": "tsc",
+		"check": "tsc --noEmit",
 		"format": "biome format --write --unsafe",
 		"lint": "biome lint --write --unsafe",
 		"assist": "biome check --write --unsafe --formatter-enabled=false --linter-enabled=false",

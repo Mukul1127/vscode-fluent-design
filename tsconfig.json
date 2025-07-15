@@ -1,15 +1,12 @@
 {
 	"compilerOptions": {
-		"moduleResolution": "bundler",
-		"noEmit": true,
-
-		"module": "es2022",
+		"module": "nodenext",
 		"target": "es2022",
 
 		"strict": true,
 
 		"resolveJsonModule": true,
-		"allowImportingTsExtensions": true
+		"rewriteRelativeImportExtensions": true
 	},
 	"include": ["src", "scripts"]
 }
