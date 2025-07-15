@@ -1,8 +1,6 @@
-/** biome-ignore-all lint/nursery/noUnresolvedImports: ESBuild and VSCode should show failures if any of these are amiss and biome's implementation is a *bit* overzealous */
-
 import { constants, copyFile, unlink } from "node:fs/promises";
 import { window } from "vscode";
-import { messages } from "./messages.js";
+import { messages } from "./messages.ts";
 
 /**
  * Creates a backup if the backup file doesn't already exist.

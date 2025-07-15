@@ -1,12 +1,10 @@
-/** biome-ignore-all lint/nursery/noUnresolvedImports: ESBuild and VSCode should show failures if any of these are amiss and biome's implementation is a *bit* overzealous */
-
 import { access } from "node:fs/promises";
 import type { ExtensionContext } from "vscode";
 import { commands, window } from "vscode";
-import { createBackup, restoreBackup } from "./backups.js";
-import { messages } from "./messages.js";
-import { patch } from "./patch.js";
-import { locateWorkbench } from "./workbench.js";
+import { createBackup, restoreBackup } from "./backups.ts";
+import { messages } from "./messages.ts";
+import { patch } from "./patch.ts";
+import { locateWorkbench } from "./workbench.ts";
 
 function reloadWindow(): void {
   commands.executeCommand("workbench.action.reloadWindow");

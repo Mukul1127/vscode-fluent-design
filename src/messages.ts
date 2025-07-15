@@ -1,13 +1,14 @@
 export const messages = {
   workbenchPathFailedStat: (path: string, error: Error): string =>
     `Failed to check workbench path ${path} with error ${error}`,
-  isDirectoryNotFile: (path: string): string => `${path} is a directory, not a file.`,
+  isDirectoryNotFile: (path: string): string =>
+    `${path} is a directory, not a file.`,
   backupFailed: (error: Error): string => `Failed to copy backup: ${error}`,
   errorNotInstanceOfError: (error: unknown): string =>
     `Thrown Error ${typeof error} is not an instance of Error.`,
   workbenchPathLookupFailed: `Unable to locate VSCode's workbench html file.`,
   invalidBackgroundPath: "Unable to retrieve user-specified background path.",
-  invalidCssTag: "Got invalid CSS tag.", 
+  invalidCssTag: "Got invalid CSS tag.",
   installed:
     "This command can only be used when Fluent Design is not installed.",
   notInstalled:

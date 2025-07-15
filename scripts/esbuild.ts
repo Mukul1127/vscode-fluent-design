@@ -1,8 +1,6 @@
-/** biome-ignore-all lint/nursery/noUnresolvedImports: VSCode should show failures if any of these are amiss and biome's implementation is a *bit* overzealous */
-
 import process from "node:process";
 import type { BuildOptions } from "esbuild";
-import esbuild from "esbuild";
+import { context } from "esbuild";
 
 const production: boolean = process.argv.includes("--production");
 const watch: boolean = process.argv.includes("--watch");
@@ -44,7 +42,7 @@ const contexts: BuildOptions[] = [
  * @returns {Promise<void>} A promise that resolves when the build is complete or the user exits watch mode.
  */
 async function buildAll(): Promise<void> {
-  const ctxs = await Promise.all(contexts.map((opts) => esbuild.context(opts)));
+  const ctxs = await Promise.all(contexts.map((opts) => context(opts)));
 
   if (watch) {
     await Promise.all(ctxs.map((ctx) => ctx.watch()));

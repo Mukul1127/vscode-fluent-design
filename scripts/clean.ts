@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/nursery/noUnresolvedImports: VSCode should show failures if any of these are amiss and biome's implementation is a *bit* overzealous */
-
 import { glob, rm, unlink } from "node:fs/promises";
 
 import packageJson from "../package.json" with { type: "json" };
