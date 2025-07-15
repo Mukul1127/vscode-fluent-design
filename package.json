@@ -80,19 +80,19 @@
 		"compile": "tsdown --silent --sourcemap",
 		"watch": "tsdown --silent -w --sourcemap",
 		"package": "tsdown --silent --minify && vsce package",
-		"check": "tsc --noEmit",
+		"check": "tsgo --noEmit",
 		"format": "biome format --write --unsafe",
 		"lint": "biome lint --write --unsafe",
 		"assist": "biome check --write --unsafe --formatter-enabled=false --linter-enabled=false",
-		"all": "tsc --noEmit && biome check --write --unsafe"
+		"all": "tsgo --noEmit && biome check --write --unsafe"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.1.1",
 		"@types/node": "24.0.13",
 		"@types/vscode": "1.93.0",
+		"@typescript/native-preview": "7.0.0-dev.20250715.1",
 		"@vscode/vsce": "3.6.0",
-		"tsdown": "0.12.9",
-		"typescript": "5.8.3"
+		"tsdown": "0.12.9"
 	},
 	"dependencies": {
 		"sharp": "0.34.3"
