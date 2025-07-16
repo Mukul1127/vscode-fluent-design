@@ -1,4 +1,6 @@
-import { stat } from "node:fs/promises";
+/** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
+
+import { statSync } from "node:fs";
 import path from "node:path";
 import { env, window } from "vscode";
 
@@ -14,11 +16,15 @@ type CandidateScore = {
  * @param {string} candidatePath The path to test.
  * @returns {Promise<CandidateScore>} A score for the path with whether it passes and if it failed, why it did.
  */
-async function testCandidatePath(
-  candidatePath: string,
-): Promise<CandidateScore> {
+function testCandidatePath(candidatePath: string): CandidateScore {
   try {
-    const statResult = await stat(candidatePath);
+    const statResult = statSync(candidatePath, { throwIfNoEntry: false });
+    if (statResult === undefined) {
+      return {
+        pass: false,
+        failReason: "undefined",
+      };
+    }
     if (statResult.isDirectory()) {
       // As far as I know, there *should* never be a directory with a .html suffix.
       return {
@@ -28,15 +34,6 @@ async function testCandidatePath(
     }
     return { pass: true };
   } catch (error) {
-    if (!(error instanceof Error)) {
-      return {
-        pass: false,
-        failReason: messages.errorNotInstanceOfError(error),
-      };
-    }
-    if (error.code === "ENOENT") {
-      return { pass: false, failReason: "ENOENT" };
-    }
     return {
       pass: false,
       failReason: messages.workbenchPathFailedStat(candidatePath, error),

@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
+
 import { access } from "node:fs/promises";
 import type { ExtensionContext } from "vscode";
 import { commands, window } from "vscode";

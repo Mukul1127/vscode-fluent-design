@@ -1,5 +1,7 @@
+/** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
+
 export const messages = {
-  workbenchPathFailedStat: (path: string, error: Error): string =>
+  workbenchPathFailedStat: (path: string, error: unknown): string =>
     `Failed to check workbench path ${path} with error ${error}`,
   isDirectoryNotFile: (path: string): string =>
     `${path} is a directory, not a file.`,

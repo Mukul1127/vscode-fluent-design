@@ -1,6 +1,5 @@
-/** biome-ignore-all lint/nursery/noExcessiveLinesPerFunction: Fix later */
+/** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
 /** biome-ignore-all lint/nursery/noSecrets: Biome seems to think our extenion's config is a environment file? */
-/** biome-ignore-all lint/performance/useTopLevelRegex: The patch() function is only called when installing, updating, or removing the fluent design patch. */
 
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -157,10 +156,10 @@ export async function patch(workbenchPath: string): Promise<void> {
     let html = await readFile(workbenchPath, { encoding: "utf-8" });
 
     const cssTag = await buildCssTag();
-    html = html.replace(/(<\/head>)/, `\n${cssTag}\n</head>`);
+    html = html.replace("</head>", `${cssTag}</head>`);
 
     const javaScriptTag = await buildJavaScriptTag();
-    html = html.replace(/(<\/html>)/, `\n${javaScriptTag}\n</html>`);
+    html = html.replace("</html>", `${javaScriptTag}</html>`);
 
     await writeFile(workbenchPath, html, { encoding: "utf-8" });
   } catch (error) {
