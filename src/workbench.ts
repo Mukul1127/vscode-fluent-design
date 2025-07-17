@@ -3,8 +3,8 @@
 import type { PathLike, Stats } from "node:fs";
 import { stat } from "node:fs/promises";
 import path from "node:path";
-import type { LoggerType } from "@src/logger.ts";
-import { Logger } from "@src/logger.ts";
+import type { LoggerType } from "@src/logger";
+import { Logger } from "@src/logger";
 import { env } from "vscode";
 
 const logger: LoggerType = new Logger("workbench.ts");

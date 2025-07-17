@@ -1,12 +1,12 @@
 /** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
 
 import type { PathLike } from "node:fs";
-import { createBackup, deleteBackup, restoreBackup } from "@src/backups.ts";
-import type { LoggerType } from "@src/logger.ts";
-import { Logger, showOutputChannel } from "@src/logger.ts";
-import { messages } from "@src/messages.ts";
-import { isPatchInstalled, patch } from "@src/patch.ts";
-import { locateWorkbench } from "@src/workbench.ts";
+import { createBackup, deleteBackup, restoreBackup } from "@src/backups";
+import type { LoggerType } from "@src/logger";
+import { Logger, showOutputChannel } from "@src/logger";
+import { messages } from "@src/messages";
+import { isPatchInstalled, patch } from "@src/patch";
+import { locateWorkbench } from "@src/workbench";
 import type { Disposable, ExtensionContext } from "vscode";
 import { commands, window } from "vscode";
 

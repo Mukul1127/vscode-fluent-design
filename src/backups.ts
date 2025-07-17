@@ -2,8 +2,8 @@
 
 import type { PathLike } from "node:fs";
 import { copyFile, unlink } from "node:fs/promises";
-import type { LoggerType } from "@src/logger.ts";
-import { Logger } from "@src/logger.ts";
+import type { LoggerType } from "@src/logger";
+import { Logger } from "@src/logger";
 
 const _logger: LoggerType = new Logger("backups.ts");
 
