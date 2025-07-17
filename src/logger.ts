@@ -1,21 +1,22 @@
 /** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
 
-import type { OutputChannel } from "vscode";
+import type { LogOutputChannel } from "vscode";
 import { window } from "vscode";
 import pkg from "../package.json" with { type: "json" };
 
-const outputChannel: OutputChannel = window.createOutputChannel(
+const outputChannel: LogOutputChannel = window.createOutputChannel(
   pkg.displayName,
+  { log: true },
 );
 
 export type LoggerType = {
   source: string;
 
+  trace(message: string): void;
   debug(message: string): void;
   info(message: string): void;
-  warning(message: string): void;
+  warn(message: string): void;
   error(message: string): void;
-  fatal(message: string): void;
 };
 
 export class Logger {
@@ -25,31 +26,31 @@ export class Logger {
     this.source = source;
   }
 
-  private log(level: string, message: string): void {
-    const timestamp = new Date().toISOString();
-    outputChannel.appendLine(
-      `[${timestamp}] [${level}] [${this.source}] ${message}`,
-    );
+  private log(message: string, func: (funcMessage: string) => void): void {
+    if (func === null) {
+      return;
+    }
+    func(`[${this.source}] ${message}`);
+  }
+
+  trace(message: string): void {
+    this.log(message, outputChannel.trace);
   }
 
   debug(message: string): void {
-    this.log("DEBUG", message);
+    this.log(message, outputChannel.debug);
   }
 
   info(message: string): void {
-    this.log("INFO", message);
+    this.log(message, outputChannel.info);
   }
 
-  warning(message: string): void {
-    this.log("WARNING", message);
+  warn(message: string): void {
+    this.log(message, outputChannel.warn);
   }
 
   error(message: string): void {
-    this.log("ERROR", message);
-  }
-
-  fatal(message: string): void {
-    this.log("FATAL", message);
+    this.log(message, outputChannel.error);
   }
 }
 
@@ -60,4 +61,13 @@ export class Logger {
  */
 export function showOutputChannel(): void {
   outputChannel.show(true);
+}
+
+/**
+ * Disposes the outputChannel.
+ *
+ * @returns {void}
+ */
+export function dispose(): void {
+  outputChannel.dispose();
 }

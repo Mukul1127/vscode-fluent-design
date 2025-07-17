@@ -69,7 +69,7 @@ async function install(): Promise<void> {
     window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
   }
 
-  logger.info("Successfully created backup.")
+  logger.info("Successfully created backup.");
 
   try {
     await patch(workbenchPath);
