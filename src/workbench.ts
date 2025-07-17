@@ -1,45 +1,11 @@
 /** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
 
-import type { PathLike } from "node:fs";
+import type { PathLike, Stats } from "node:fs";
 import { stat } from "node:fs/promises";
 import path from "node:path";
 import { env, window } from "vscode";
 
 import { messages } from "./messages.ts";
-
-/**
- * Converts a PathLike into string form, handles strings, Buffers, and URLs.
- *
- * @param {PathLike} pathLike The PathLike to convert.
- * @returns {string} The PathLike in string form.
- * @throws {TypeError} Throws if an invalid PathLike is given.
- */
-function pathLikeToString(pathLike: PathLike): string {
-  switch (true) {
-    case typeof pathLike === "string":
-      return pathLike;
-    case Buffer.isBuffer(pathLike):
-      return pathLike.toString();
-    case pathLike instanceof URL:
-      if (pathLike.protocol !== "file:") {
-        throw new TypeError("Only file protocol URLs are supported");
-      }
-      return decodeURIComponent(pathLike.pathname);
-    default:
-      throw new TypeError("Unsupported PathLike type");
-  }
-}
-
-/**
- * Concatenates PathLikes and returns a PathLike in string form.
- * 
- * @param {PathLike[]} paths The paths to concatenate. 
- * @returns {PathLike} The concatenated path in string form.
- */
-function joinPathLike(...paths: PathLike[]): PathLike {
-  const stringPaths = paths.map(pathLikeToString);
-  return path.join(...stringPaths);
-}
 
 type CandidateScore = {
   pass: boolean;
@@ -57,7 +23,7 @@ async function testCandidatePath(
   candidatePath: PathLike,
 ): Promise<CandidateScore> {
   try {
-    const statResult = await stat(candidatePath);
+    const statResult: Stats = await stat(candidatePath);
     if (statResult.isDirectory()) {
       // As far as I know, there *should* never be a directory named with a .html suffix.
       return {
@@ -67,7 +33,7 @@ async function testCandidatePath(
     }
     return { pass: true };
   } catch (error) {
-    const safeError = error as NodeJS.ErrnoException; // stat() *should* only throw NodeJS.ErrnoExceptions.
+    const safeError: NodeJS.ErrnoException = error as NodeJS.ErrnoException; // stat() *should* only throw NodeJS.ErrnoExceptions.
     if (safeError.code === "ENOENT") {
       return { pass: false, failReason: "ENOENT" };
     }
@@ -89,30 +55,31 @@ async function testCandidatePath(
  * @throws {AggregateError} Throws if all workbench file canidates also threw exceptions.
  */
 export async function locateWorkbench(): Promise<PathLike> {
-  const basePath = path.join(env.appRoot, "out", "vs", "code");
+  const basePath: string = path.join(env.appRoot, "out", "vs", "code");
 
-  const candidateWorkbenchDirectories: PathLike[] = [
+  const candidateWorkbenchDirectories: string[] = [
     path.join("electron-sandbox", "workbench"), // pre-v1.102 path
     path.join("electron-browser", "workbench"), // post-v1.102 path
   ];
 
-  const candidateHtmlFiles: PathLike[] = [
+  const candidateHtmlFiles: string[] = [
     "workbench.html", // VSCode
     "workbench.esm.html", // VSCode ESM
     "workbench-dev.html", // VSCode dev
   ];
 
   // Get list of candidate paths.
-  const candidatePaths = candidateWorkbenchDirectories.flatMap((dir) =>
-    candidateHtmlFiles.map((file) => joinPathLike(basePath, dir, file)),
+  const candidatePaths: PathLike[] = candidateWorkbenchDirectories.flatMap(
+    (dir: string) =>
+      candidateHtmlFiles.map((file: string) => path.join(basePath, dir, file)),
   );
 
   // Make array of Promises that ensures path is correct before returning path, throwing otherwise.
   const candidatePromises: Promise<PathLike>[] = candidatePaths.map(
-    async (candidatePath) => {
-      const score = await testCandidatePath(candidatePath);
+    async (candidatePath: PathLike) => {
+      const score: CandidateScore = await testCandidatePath(candidatePath);
       if (!score.pass) {
-        const error = new Error(score.failReason);
+        const error: Error = new Error(score.failReason);
         if (score.failReason !== "ENOENT") {
           window.showErrorMessage(String(error));
         }
@@ -123,6 +90,6 @@ export async function locateWorkbench(): Promise<PathLike> {
   );
 
   // Run all promises at once and return the first promise that succeeds.
-  const result = await Promise.any(candidatePromises);
+  const result: PathLike = await Promise.any(candidatePromises);
   return result;
 }

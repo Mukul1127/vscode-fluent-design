@@ -4,10 +4,19 @@ import type { PathLike } from "node:fs";
 import type { ExtensionContext } from "vscode";
 import { commands, window } from "vscode";
 import { createBackup, deleteBackup, restoreBackup } from "./backups.ts";
+import type { LoggerType } from "./logger.ts";
+import { Logger } from "./logger.ts";
 import { messages } from "./messages.ts";
 import { isPatchInstalled, patch } from "./patch.ts";
 import { locateWorkbench } from "./workbench.ts";
 
+const logger: LoggerType = new Logger("extension.ts");
+
+/**
+ * Reloads the window.
+ *
+ * @returns {void}
+ */
 function reloadWindow(): void {
   commands.executeCommand("workbench.action.reloadWindow");
 }
@@ -171,6 +180,8 @@ async function uninstall(): Promise<void> {
  * @returns {void}
  */
 export function activate(context: ExtensionContext): void {
+  logger.debug("Extension Loaded!");
+
   const installCommand = commands.registerCommand(
     "vscode-fluent-design.install",
     install,
