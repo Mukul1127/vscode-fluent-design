@@ -32,7 +32,7 @@ function reloadWindow(): void {
  * - Applies the patch.
  *
  * @async
- * @returns {Promise<void>}
+ * @returns {Promise<void>} A promise that resolves when the patch is installed.
  */
 async function install(): Promise<void> {
   logger.info("Started installing Fluent Design Patch.");
@@ -59,19 +59,27 @@ async function install(): Promise<void> {
     return;
   }
 
+  logger.info("Patch not installed, continuing.");
+
   try {
     await createBackup(workbenchPath, backupWorkbenchPath);
   } catch (error: unknown) {
     const safeError = error as NodeJS.ErrnoException; // Filesystem Operations *should* only throw NodeJS.ErrnoExceptions.
+    logger.error(`Failed to create backup, error: ${safeError}`);
     window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
   }
+
+  logger.info("Successfully created backup.")
 
   try {
     await patch(workbenchPath);
   } catch (error: unknown) {
     const safeError = error as Error;
+    logger.error(`Failed to install patch, error: ${safeError}`);
     window.showErrorMessage(messages.errors.patchingFailed(safeError));
   }
+
+  logger.info("Successfully installed patch.");
 
   logger.info("Finished installing Fluent Design Patch.");
 
@@ -92,7 +100,7 @@ async function install(): Promise<void> {
  * - Reapplies the patch.
  *
  * @async
- * @returns {Promise<void>}
+ * @returns {Promise<void>} A promise that resolves when the patch is reinstalled.
  */
 async function reinstall(): Promise<void> {
   logger.info("Started reinstalling Fluent Design Patch.");
@@ -119,19 +127,27 @@ async function reinstall(): Promise<void> {
     return;
   }
 
+  logger.info("Patch installed, continuing.");
+
   try {
     await restoreBackup(backupWorkbenchPath, workbenchPath);
   } catch (error: unknown) {
     const safeError = error as NodeJS.ErrnoException; // Filesystem Operations *should* only throw NodeJS.ErrnoExceptions.
+    logger.error(`Failed to restore backup, error: ${safeError}`);
     window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
   }
+
+  logger.info("Successfully restored backup.");
 
   try {
     await patch(workbenchPath);
   } catch (error: unknown) {
     const safeError = error as Error;
+    logger.error(`Failed to install patch, error: ${safeError}`);
     window.showErrorMessage(messages.errors.patchingFailed(safeError));
   }
+
+  logger.info("Successfully installed patch.");
 
   logger.info("Finished reinstalling Fluent Design Patch.");
 
@@ -151,7 +167,7 @@ async function reinstall(): Promise<void> {
  * - Restores the original workbench file.
  *
  * @async
- * @returns {Promise<void>}
+ * @returns {Promise<void>} A promise that resolves when the patch is uninstalled.
  */
 async function uninstall(): Promise<void> {
   logger.info("Started uninstalling Fluent Design Patch.");
@@ -178,19 +194,27 @@ async function uninstall(): Promise<void> {
     return;
   }
 
+  logger.info("Patch installed, continuing.");
+
   try {
     await restoreBackup(backupWorkbenchPath, workbenchPath);
   } catch (error: unknown) {
     const safeError = error as NodeJS.ErrnoException; // Filesystem Operations *should* only throw NodeJS.ErrnoExceptions.
+    logger.error(`Failed to restore backup, error: ${safeError}`);
     window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
   }
+
+  logger.info("Successfully restored backup.");
 
   try {
     await deleteBackup(backupWorkbenchPath);
   } catch (error: unknown) {
     const safeError = error as NodeJS.ErrnoException; // Filesystem Operations *should* only throw NodeJS.ErrnoExceptions.
+    logger.error(`Failed to delete backup, error: ${safeError}`);
     window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
   }
+
+  logger.info("Successfully deleted backup.");
 
   logger.info("Finished uninstalling Fluent Design Patch.");
 
@@ -207,7 +231,7 @@ let uninstallCommand: Disposable;
 let showLogsCommand: Disposable;
 
 /**
- * This function is called when the extension is activated
+ * This function is called when the extension is activated.
  *
  * @param {ExtensionContext} context The VSCode Extension Context
  * @returns {void}
@@ -241,7 +265,7 @@ export function activate(context: ExtensionContext): void {
 }
 
 /**
- * This function is called when the extension is activated
+ * This function is called when the extension is deactivated.
  *
  * @returns {void}
  */
