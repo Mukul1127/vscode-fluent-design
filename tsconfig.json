@@ -1,12 +1,19 @@
 {
 	"compilerOptions": {
-		"module": "nodenext",
-		"target": "es2022",
+		"moduleResolution": "bundler",
+		"module": "esnext",
+		"target": "esnext",
 
 		"strict": true,
+		"noEmit": true,
 
 		"resolveJsonModule": true,
-		"rewriteRelativeImportExtensions": true
+		"allowImportingTsExtensions": true,
+
+		"paths": {
+			"@src/*": ["./src/*"],
+			"@packageJson": ["./package.json"]
+		}
 	},
 	"include": ["src"]
 }

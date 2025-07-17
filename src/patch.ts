@@ -2,8 +2,8 @@
 
 import type { PathLike } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
-import type { LoggerType } from "./logger.ts";
-import { Logger } from "./logger.ts";
+import type { LoggerType } from "@src/logger.ts";
+import { Logger } from "@src/logger.ts";
 
 const _logger: LoggerType = new Logger("patch.ts");
 

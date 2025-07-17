@@ -1,8 +1,8 @@
 /** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
 
+import pkg from "@packageJson" with { type: "json" };
 import type { LogOutputChannel } from "vscode";
 import { window } from "vscode";
-import pkg from "../package.json" with { type: "json" };
 
 const outputChannel: LogOutputChannel = window.createOutputChannel(
   pkg.displayName,

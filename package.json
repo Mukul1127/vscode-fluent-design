@@ -91,11 +91,11 @@
 		"compile": "tsdown --silent --sourcemap",
 		"watch": "tsdown --silent -w --sourcemap",
 		"package": "tsdown --silent --minify && vsce package",
-		"check": "tsc --noEmit",
+		"check": "tsc",
 		"format": "biome format --write --unsafe",
 		"lint": "biome lint --write --unsafe",
 		"assist": "biome check --write --unsafe --formatter-enabled=false --linter-enabled=false",
-		"all": "tsc --noEmit && biome check --write --unsafe"
+		"all": "tsc && biome check --write --unsafe"
 	},
 	"type": "module"
 }
