@@ -11,7 +11,7 @@
 		"@types/node": "24.0.14",
 		"@types/vscode": "1.93.0",
 		"@vscode/vsce": "3.6.0",
-		"tsdown": "0.12.9",
+		"esbuild": "0.25.6",
 		"typescript": "5.8.3"
 	},
 	"activationEvents": [],
@@ -87,10 +87,9 @@
 		"vscode": "^1.93.0"
 	},
 	"scripts": {
-		"dev": "echo 'Open extension.ts in VSCode and then run your extension with F5",
-		"compile": "tsdown --silent --sourcemap",
-		"watch": "tsdown --silent -w --sourcemap",
-		"package": "tsdown --silent --minify && vsce package",
+		"dev": "echo 'Open extension.ts in VSCode and then run the extension with F5",
+		"compile": "bun scripts/esbuild.ts",
+		"package": "bun scripts/esbuild.ts --production && vsce package --no-dependencies",
 		"check": "tsc",
 		"format": "biome format --write --unsafe",
 		"lint": "biome lint --write --unsafe",

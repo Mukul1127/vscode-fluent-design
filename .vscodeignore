@@ -3,6 +3,4 @@
 */**
 
 # Whitelist what you need
-!node_modules/
-!node_modules/**/*
 !dist/**/*

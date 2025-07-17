@@ -15,5 +15,5 @@
 			"@packageJson": ["./package.json"]
 		}
 	},
-	"include": ["src"]
+	"include": ["src", "scripts"]
 }
