@@ -1,24 +1,30 @@
 /** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
 
 export const messages = {
-  workbenchPathFailedStat: (path: string, error: unknown): string =>
-    `Failed to check workbench path ${path} with error ${error}`,
-  isDirectoryNotFile: (path: string): string =>
-    `${path} is a directory, not a file.`,
-  backupFailed: (error: Error): string => `Failed to copy backup: ${error}`,
-  errorNotInstanceOfError: (error: unknown): string =>
-    `Thrown Error ${typeof error} is not an instance of Error.`,
-  workbenchPathLookupFailed: `Unable to locate VSCode's workbench html file.`,
-  invalidBackgroundPath: "Unable to retrieve user-specified background path.",
-  invalidCssTag: "Got invalid CSS tag.",
-  installed:
-    "This command can only be used when Fluent Design is not installed.",
-  notInstalled:
-    "This command can only be used when Fluent Design is installed.",
-  enabled:
-    "Fluent Design patch applied. VS Code needs to reboot to apply the changes.",
-  disabled:
-    "Fluent Design patch removed. VS Code needs to reboot to apply the changes.",
-  admin:
-    "VSCode needs to be started as admin to apply the Fluent Design patches.",
+  errors: {
+    workbenchPathFailedStat: (
+      path: string,
+      error: NodeJS.ErrnoException,
+    ): string => `Failed to check workbench path: ${path}, encountered error: ${error}`,
+    backupOperationFailed: (error: NodeJS.ErrnoException): string =>
+      `Failed to copy and/or delete backup: ${error}`,
+    workbenchPathLookupFailed: (error: AggregateError): string =>
+      `Unable to locate VSCode's workbench html file. Errors returned: ${error.errors}`,
+    isDirectoryNotFile: (path: string): string =>
+      `${path} is a directory, not a file.`,
+    invalidBackgroundPath: "Unable to retrieve user-specified background path.",
+    invalidCssTag: "Got invalid CSS tag.",
+  },
+  userFacing: {
+    patchAlreadyInstalled:
+      "This command can only be used when the Fluent Design patch is not installed.",
+    patchNotInstalled:
+      "This command can only be used when the Fluent Design patch is installed.",
+    patchApplied:
+      "Fluent Design patch applied. VS Code needs to reboot to apply the changes.",
+    patchRemoved:
+      "Fluent Design patch removed. VS Code needs to reboot to apply the changes.",
+    adminRequired:
+      "VSCode needs to be started as administrator to apply the Fluent Design patch.",
+  }
 };

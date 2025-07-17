@@ -7,6 +7,8 @@ import sharp from "sharp";
 import { window, workspace } from "vscode";
 import { messages } from "./messages.ts";
 
+const fluentDesignPatchTag = "<!-- Fluent Design Patched -->";
+
 /**
  * Generates a blured background from the specified wallpaper image.
  *
@@ -25,7 +27,7 @@ async function generateBluredBackgroundImage(
     return `data:image/avif;base64,${blurredImage.toString("base64")}`;
   } catch (error) {
     window.showErrorMessage(String(error));
-    window.showInformationMessage(messages.admin);
+    window.showInformationMessage(messages.userFacing.adminRequired);
     return null;
   }
 }
@@ -60,7 +62,7 @@ async function buildCssTag(): Promise<string | null> {
   const bgUrl = config.get<string>("wallpaperPath", "");
 
   if (!bgUrl) {
-    window.showErrorMessage(messages.invalidBackgroundPath);
+    window.showErrorMessage(messages.errors.invalidBackgroundPath);
     return null;
   }
 
@@ -83,7 +85,7 @@ async function buildCssTag(): Promise<string | null> {
     styles.map(async (url) => {
       let tag = await getCssTag(url);
       if (!tag) {
-        window.showErrorMessage(messages.invalidCssTag);
+        window.showErrorMessage(messages.errors.invalidCssTag);
         return null;
       }
 
@@ -161,8 +163,24 @@ export async function patch(workbenchPath: string): Promise<void> {
     const javaScriptTag = await buildJavaScriptTag();
     html = html.replace("</html>", `${javaScriptTag}</html>`);
 
+    // Tag file
+    html.replace("<html>", `<html>${fluentDesignPatchTag}`);
+
     await writeFile(workbenchPath, html, { encoding: "utf-8" });
   } catch (error) {
     window.showErrorMessage(String(error));
   }
+}
+
+/**
+ * Checks the specified workbench file to see if the Fluent Design Patch is installed.
+ *
+ * @param {string} workbenchPath The path to the workbench file to check.
+ * @returns {Promise<boolean>} A promise that resolves true if the patch is installed and false otherwise.
+ */
+export async function isPatchInstalled(
+  workbenchPath: string,
+): Promise<boolean> {
+  const fileContents = await readFile(workbenchPath, { encoding: "utf-8" });
+  return fileContents.includes(fluentDesignPatchTag);
 }

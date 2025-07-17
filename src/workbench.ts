@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
 
-import { statSync } from "node:fs";
+import { stat } from "node:fs/promises";
 import path from "node:path";
 import { env, window } from "vscode";
 
@@ -12,31 +12,32 @@ type CandidateScore = {
 };
 
 /**
+ * Tests the provded path for whether it's a valid path that this we can access.
  *
  * @param {string} candidatePath The path to test.
  * @returns {Promise<CandidateScore>} A score for the path with whether it passes and if it failed, why it did.
  */
-function testCandidatePath(candidatePath: string): CandidateScore {
+async function testCandidatePath(
+  candidatePath: string,
+): Promise<CandidateScore> {
   try {
-    const statResult = statSync(candidatePath, { throwIfNoEntry: false });
-    if (statResult === undefined) {
-      return {
-        pass: false,
-        failReason: "undefined",
-      };
-    }
+    const statResult = await stat(candidatePath);
     if (statResult.isDirectory()) {
-      // As far as I know, there *should* never be a directory with a .html suffix.
+      // As far as I know, there *should* never be a directory named with a .html suffix.
       return {
         pass: false,
-        failReason: messages.isDirectoryNotFile(candidatePath),
+        failReason: messages.errors.isDirectoryNotFile(candidatePath),
       };
     }
     return { pass: true };
   } catch (error) {
+    const safeError = error as NodeJS.ErrnoException; // stat() *should* only throw NodeJS.ErrnoExceptions.
+    if (safeError.code === "ENOENT") {
+      return { pass: false, failReason: "ENOENT" };
+    }
     return {
       pass: false,
-      failReason: messages.workbenchPathFailedStat(candidatePath, error),
+      failReason: messages.errors.workbenchPathFailedStat(candidatePath, safeError),
     };
   }
 }
@@ -70,23 +71,24 @@ export async function locateWorkbench(): Promise<string | null> {
     async (candidatePath) => {
       const score = await testCandidatePath(candidatePath);
       if (!score.pass) {
-        const customError = new Error(score.failReason);
+        const error = new Error(score.failReason);
         if (score.failReason !== "ENOENT") {
-          window.showErrorMessage(String(customError));
+          window.showErrorMessage(String(error));
         }
-        throw customError;
+        throw error;
       }
       return candidatePath;
     },
   );
 
-  // Run all promises at once and return the first promies that succeeds.
+  // Run all promises at once and return the first promise that succeeds.
   try {
     const result = await Promise.any(candidatePromises);
     return result;
-  } catch {
+  } catch (error: unknown) {
     // All candidates failed
-    window.showErrorMessage(messages.workbenchPathLookupFailed);
+    const safeError = error as AggregateError; // Promise.any() *should* never return anything other than an AggregateError
+    window.showErrorMessage(messages.errors.workbenchPathLookupFailed(safeError));
     return null;
   }
 }

@@ -1,52 +1,57 @@
 /** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
 
-import { constants, copyFile, unlink } from "node:fs/promises";
-import { window } from "vscode";
-import { messages } from "./messages.ts";
+import type { PathLike } from "node:fs";
+import { copyFile, unlink } from "node:fs/promises";
 
 /**
- * Creates a backup if the backup file doesn't already exist.
+ * Creates a backup overwriting the original file if it exists.
  *
- * @param {string} originalFilePath The original file path to copy from.
- * @param {string} backupFilePath The backup file path to copy to.
- * @returns {Promise<void>} Resolves when the backup is created. `true` means the operation completed successfully.
+ * @async
+ * @example
+ * // Creates a backup, copying C:\file.txt to C:\file.backup.txt.
+ * createBackup("C:\\file.txt", "C:\\file.backup.txt")
+ * @param {PathLike} originalFilePath The original file path to copy from.
+ * @param {PathLike} backupFilePath The backup file path to copy to.
+ * @returns {Promise<void>} Resolves when the backup is created.
+ * @throws {NodeJS.ErrnoException} Throws if one of the files couldn't be accessed.
  */
 export async function createBackup(
-  originalFilePath: string,
-  backupFilePath: string,
-): Promise<boolean> {
-  try {
-    await copyFile(originalFilePath, backupFilePath, constants.COPYFILE_EXCL);
-    return true;
-  } catch (error) {
-    window.showErrorMessage(messages.backupFailed + String(error));
-    return false;
-  }
+  originalFilePath: PathLike,
+  backupFilePath: PathLike,
+): Promise<void> {
+  await copyFile(originalFilePath, backupFilePath);
 }
 
 /**
- * Restores a backup overwriting the original file if it exists
+ * Restores a backup overwriting the original file if it exists.
  *
- * Optionally, the backup file is kept if `keepBackup` is `true`.
- *
- * @param {string} backupFilePath The backup file path to copy from.
- * @param {string} originalFilePath The original file path to copy to.
- * @param {boolean} keepBackup Whether to keep the backup file.
- * @returns {Promise<void>} Resolves when the restore is complete. `true` means the operation completed successfully.
+ * @async
+ * @example
+ * // Restores a backup, copying C:\file.backup.txt to C:\file.txt.
+ * restoreBackup("C:\\file.txt", "C:\\file.backup.txt")
+ * @param {PathLike} backupFilePath The backup file path to copy from.
+ * @param {PathLike} originalFilePath The original file path to copy to.
+ * @returns {Promise<void>} Resolves when the restore is complete.
+ * @throws {NodeJS.ErrnoException} Throws if one of the files couldn't be accessed.
  */
 export async function restoreBackup(
-  backupFilePath: string,
-  originalFilePath: string,
-  keepBackup?: boolean,
-): Promise<boolean> {
-  try {
-    await copyFile(backupFilePath, originalFilePath);
-    if (!keepBackup) {
-      await unlink(backupFilePath);
-    }
-    return true;
-  } catch (error) {
-    window.showErrorMessage(messages.backupFailed + String(error));
-    return false;
-  }
+  backupFilePath: PathLike,
+  originalFilePath: PathLike,
+): Promise<void> {
+  await copyFile(backupFilePath, originalFilePath);
+}
+
+/**
+ * Deletes the specified backup.
+ *
+ * @async
+ * @example
+ * // Deletes the backup at C:\file.backup.txt.
+ * deleteBackup("C:\\file.backup.txt")
+ * @param {PathLike} backupFilePath The backup file path to delete.
+ * @returns {Promise<void>} Resolves when the deletion is complete.
+ * @throws {NodeJS.ErrnoException} Throws if the backup doesn't exist.
+ */
+export async function deleteBackup(backupFilePath: PathLike): Promise<void> {
+  await unlink(backupFilePath);
 }

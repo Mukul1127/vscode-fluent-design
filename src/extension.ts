@@ -1,30 +1,14 @@
 /** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
 
-import { access } from "node:fs/promises";
 import type { ExtensionContext } from "vscode";
 import { commands, window } from "vscode";
-import { createBackup, restoreBackup } from "./backups.ts";
+import { createBackup, deleteBackup, restoreBackup } from "./backups.ts";
 import { messages } from "./messages.ts";
-import { patch } from "./patch.ts";
+import { isPatchInstalled, patch } from "./patch.ts";
 import { locateWorkbench } from "./workbench.ts";
 
 function reloadWindow(): void {
   commands.executeCommand("workbench.action.reloadWindow");
-}
-
-/**
- * Checks whether a path exists asynchronously.
- *
- * @param {string} path The path to be checked.
- * @returns {Promise<boolean>} A promise returning `true` if the path exists and `false` otherwise.
- */
-async function exists(path: string): Promise<boolean> {
-  try {
-    await access(path);
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 /**
@@ -45,20 +29,22 @@ async function install(): Promise<void> {
   }
   const backupWorkbenchPath = `${workbenchPath}.bak`;
 
-  if (await exists(backupWorkbenchPath)) {
-    window.showInformationMessage(messages.installed);
+  if (await isPatchInstalled(workbenchPath)) {
+    window.showInformationMessage(messages.userFacing.patchAlreadyInstalled);
     return;
   }
 
-  const succeeded = await createBackup(workbenchPath, backupWorkbenchPath);
-  if (!succeeded) {
-    return;
+  try {
+    await createBackup(workbenchPath, backupWorkbenchPath);
+  } catch (error: unknown) {
+    const safeError = error as NodeJS.ErrnoException; // Filesystem Operations *should* only throw NodeJS.ErrnoExceptions.
+    window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
   }
 
   await patch(workbenchPath);
 
   window
-    .showInformationMessage(messages.enabled, { title: "Restart VSCode" })
+    .showInformationMessage(messages.userFacing.patchApplied, { title: "Restart VSCode" })
     .then(reloadWindow);
 }
 
@@ -80,24 +66,22 @@ async function reinstall(): Promise<void> {
   }
   const backupWorkbenchPath = `${workbenchPath}.bak`;
 
-  if (!(await exists(backupWorkbenchPath))) {
-    window.showInformationMessage(messages.notInstalled);
+  if (!(await isPatchInstalled(workbenchPath))) {
+    window.showInformationMessage(messages.userFacing.patchNotInstalled);
     return;
   }
 
-  const succeeded = await restoreBackup(
-    backupWorkbenchPath,
-    workbenchPath,
-    true,
-  );
-  if (!succeeded) {
-    return;
+  try {
+    await restoreBackup(backupWorkbenchPath, workbenchPath);
+  } catch (error: unknown) {
+    const safeError = error as NodeJS.ErrnoException; // Filesystem Operations *should* only throw NodeJS.ErrnoExceptions.
+    window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
   }
 
   await patch(workbenchPath);
 
   window
-    .showInformationMessage(messages.enabled, { title: "Restart VSCode" })
+    .showInformationMessage(messages.userFacing.patchApplied, { title: "Restart VSCode" })
     .then(reloadWindow);
 }
 
@@ -118,18 +102,27 @@ async function uninstall(): Promise<void> {
   }
   const backupWorkbenchPath = `${workbenchPath}.bak`;
 
-  if (!(await exists(backupWorkbenchPath))) {
-    window.showInformationMessage(messages.notInstalled);
+  if (!(await isPatchInstalled(workbenchPath))) {
+    window.showInformationMessage(messages.userFacing.patchNotInstalled);
     return;
   }
 
-  const succeeded = restoreBackup(backupWorkbenchPath, workbenchPath);
-  if (!succeeded) {
-    return;
+  try {
+    await restoreBackup(backupWorkbenchPath, workbenchPath);
+  } catch (error: unknown) {
+    const safeError = error as NodeJS.ErrnoException; // Filesystem Operations *should* only throw NodeJS.ErrnoExceptions.
+    window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
+  }
+
+  try {
+    await deleteBackup(backupWorkbenchPath);
+  } catch (error: unknown) {
+    const safeError = error as NodeJS.ErrnoException; // Filesystem Operations *should* only throw NodeJS.ErrnoExceptions.
+    window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
   }
 
   window
-    .showInformationMessage(messages.disabled, { title: "Restart VSCode" })
+    .showInformationMessage(messages.userFacing.patchRemoved, { title: "Restart VSCode" })
     .then(reloadWindow);
 }
 
