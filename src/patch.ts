@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
 /** biome-ignore-all lint/nursery/noSecrets: Biome seems to think our extenion's config is a environment file? */
 
+import type { PathLike } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
@@ -55,7 +56,7 @@ async function getCssTag(url: string): Promise<string | null> {
  */
 
 // biome-ignore lint/nursery/noExcessiveLinesPerFunction: Error Checking
-async  function buildCssTag(): Promise<string> {
+async function buildCssTag(): Promise<string> {
   const config = workspace.getConfiguration("vscode-fluent-design");
 
   const isDark = window.activeColorTheme.kind === 2;
@@ -93,7 +94,7 @@ async  function buildCssTag(): Promise<string> {
     styles.map(async (url) => {
       let tag = await getCssTag(url);
       if (!tag) {
-        const customError = new Error(messages.errors.invalidCssTag)
+        const customError = new Error(messages.errors.invalidCssTag);
         window.showErrorMessage(String(customError));
         throw customError;
       }
@@ -157,11 +158,11 @@ async function buildJavaScriptTag(): Promise<string> {
  * Patches the workbench HTML file to inject Fluent Design CSS and JavaScript.
  *
  * @async
- * @param {string} workbenchPath - The path to the workbench HTML file.
+ * @param {PathLike} workbenchPath - The path to the workbench HTML file.
  * @returns {Promise<void>} A promise that resolves when the patching completed.
  * @throws {NodeJS.ErrnoException} Throws if an error reading or writing the file occured or building the CSS and JavaScript tag failed.
  */
-export async function patch(workbenchPath: string): Promise<void> {
+export async function patch(workbenchPath: PathLike): Promise<void> {
   let html = await readFile(workbenchPath, { encoding: "utf-8" });
 
   const cssTag = await buildCssTag();
@@ -172,7 +173,9 @@ export async function patch(workbenchPath: string): Promise<void> {
     javaScriptTag = await buildJavaScriptTag();
   } catch (error: unknown) {
     const safeError = error as NodeJS.ErrnoException;
-    window.showErrorMessage(messages.errors.loadingJavaScriptTemplateFailed(safeError));
+    window.showErrorMessage(
+      messages.errors.loadingJavaScriptTemplateFailed(safeError),
+    );
     throw safeError;
   }
   html = html.replace("</html>", `${javaScriptTag}</html>`);
@@ -187,11 +190,11 @@ export async function patch(workbenchPath: string): Promise<void> {
  * Checks the specified workbench file to see if the Fluent Design Patch is installed.
  *
  * @async
- * @param {string} workbenchPath The path to the workbench file to check.
+ * @param {PathLike} workbenchPath The path to the workbench file to check.
  * @returns {Promise<boolean>} A promise that resolves true if the patch is installed and false otherwise.
  */
 export async function isPatchInstalled(
-  workbenchPath: string,
+  workbenchPath: PathLike,
 ): Promise<boolean> {
   const fileContents = await readFile(workbenchPath, { encoding: "utf-8" });
   return fileContents.includes(fluentDesignPatchTag);

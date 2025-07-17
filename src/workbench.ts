@@ -1,10 +1,32 @@
 /** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
 
+import type { PathLike } from "node:fs";
 import { stat } from "node:fs/promises";
 import path from "node:path";
 import { env, window } from "vscode";
 
 import { messages } from "./messages.ts";
+
+function pathLikeToString(pathLike: PathLike): string {
+  switch (true) {
+    case typeof pathLike === "string":
+      return pathLike;
+    case Buffer.isBuffer(pathLike):
+      return pathLike.toString();
+    case pathLike instanceof URL:
+      if (pathLike.protocol !== "file:") {
+        throw new TypeError("Only file protocol URLs are supported");
+      }
+      return decodeURIComponent(pathLike.pathname);
+    default:
+      throw new TypeError("Unsupported PathLike type");
+  }
+}
+
+function joinPathLike(...paths: PathLike[]): PathLike {
+  const stringPaths = paths.map(pathLikeToString);
+  return path.join(...stringPaths);
+}
 
 type CandidateScore = {
   pass: boolean;
@@ -15,11 +37,11 @@ type CandidateScore = {
  * Tests the provded path for whether it's a valid path that this we can access.
  *
  * @async
- * @param {string} candidatePath The path to test.
+ * @param {PathLike} candidatePath The path to test.
  * @returns {Promise<CandidateScore>} A score for the path with whether it passes and if it failed, why it did.
  */
 async function testCandidatePath(
-  candidatePath: string,
+  candidatePath: PathLike,
 ): Promise<CandidateScore> {
   try {
     const statResult = await stat(candidatePath);
@@ -38,7 +60,10 @@ async function testCandidatePath(
     }
     return {
       pass: false,
-      failReason: messages.errors.workbenchPathFailedStat(candidatePath, safeError),
+      failReason: messages.errors.workbenchPathFailedStat(
+        candidatePath,
+        safeError,
+      ),
     };
   }
 }
@@ -47,18 +72,18 @@ async function testCandidatePath(
  * Searches and returns the workbench html file path.
  *
  * @async
- * @returns {Promise<string>} A promise that resolves either a `string` when the workbench html file is found or `null` if the lookup failed.
+ * @returns {Promise<PathLike>} A promise that resolves either a `string` when the workbench html file is found or `null` if the lookup failed.
  * @throws {AggregateError} Throws if all workbench file canidates also threw exceptions.
  */
-export async function locateWorkbench(): Promise<string> {
+export async function locateWorkbench(): Promise<PathLike> {
   const basePath = path.join(env.appRoot, "out", "vs", "code");
 
-  const candidateWorkbenchDirectories = [
+  const candidateWorkbenchDirectories: PathLike[] = [
     path.join("electron-sandbox", "workbench"), // pre-v1.102 path
     path.join("electron-browser", "workbench"), // post-v1.102 path
   ];
 
-  const candidateHtmlFiles = [
+  const candidateHtmlFiles: PathLike[] = [
     "workbench.html", // VSCode
     "workbench.esm.html", // VSCode ESM
     "workbench-dev.html", // VSCode dev
@@ -66,11 +91,11 @@ export async function locateWorkbench(): Promise<string> {
 
   // Get list of candidate paths.
   const candidatePaths = candidateWorkbenchDirectories.flatMap((dir) =>
-    candidateHtmlFiles.map((file) => path.join(basePath, dir, file)),
+    candidateHtmlFiles.map((file) => joinPathLike(basePath, dir, file)),
   );
 
   // Make array of Promises that ensures path is correct before returning path, throwing otherwise.
-  const candidatePromises: Promise<string>[] = candidatePaths.map(
+  const candidatePromises: Promise<PathLike>[] = candidatePaths.map(
     async (candidatePath) => {
       const score = await testCandidatePath(candidatePath);
       if (!score.pass) {

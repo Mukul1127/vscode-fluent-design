@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
 
+import type { PathLike } from "node:fs";
 import type { ExtensionContext } from "vscode";
 import { commands, window } from "vscode";
 import { createBackup, deleteBackup, restoreBackup } from "./backups.ts";
@@ -24,8 +25,14 @@ function reloadWindow(): void {
  * @returns {Promise<void>}
  */
 async function install(): Promise<void> {
-  const workbenchPath = await locateWorkbench();
-  if (workbenchPath === null) {
+  let workbenchPath: PathLike;
+  try {
+    workbenchPath = await locateWorkbench();
+  } catch (error: unknown) {
+    const safeError = error as AggregateError; // Promise.any() *should* only throw AggregateErrors
+    window.showErrorMessage(
+      messages.errors.workbenchPathLookupFailed(safeError),
+    );
     return;
   }
   const backupWorkbenchPath = `${workbenchPath}.bak`;
@@ -50,7 +57,9 @@ async function install(): Promise<void> {
   }
 
   window
-    .showInformationMessage(messages.userFacing.patchApplied, { title: "Restart VSCode" })
+    .showInformationMessage(messages.userFacing.patchApplied, {
+      title: "Restart VSCode",
+    })
     .then(reloadWindow);
 }
 
@@ -67,8 +76,14 @@ async function install(): Promise<void> {
  * @returns {Promise<void>}
  */
 async function reinstall(): Promise<void> {
-  const workbenchPath = await locateWorkbench();
-  if (workbenchPath === null) {
+  let workbenchPath: PathLike;
+  try {
+    workbenchPath = await locateWorkbench();
+  } catch (error: unknown) {
+    const safeError = error as AggregateError; // Promise.any() *should* only throw AggregateErrors
+    window.showErrorMessage(
+      messages.errors.workbenchPathLookupFailed(safeError),
+    );
     return;
   }
   const backupWorkbenchPath = `${workbenchPath}.bak`;
@@ -93,7 +108,9 @@ async function reinstall(): Promise<void> {
   }
 
   window
-    .showInformationMessage(messages.userFacing.patchApplied, { title: "Restart VSCode" })
+    .showInformationMessage(messages.userFacing.patchApplied, {
+      title: "Restart VSCode",
+    })
     .then(reloadWindow);
 }
 
@@ -109,15 +126,16 @@ async function reinstall(): Promise<void> {
  * @returns {Promise<void>}
  */
 async function uninstall(): Promise<void> {
-  let workbenchPath: string;
+  let workbenchPath: PathLike;
   try {
     workbenchPath = await locateWorkbench();
-  } catch (error) {
-    const safeError = error as AggregateError; // Promise.any() *should* only throw AggregateError
-    window.showErrorMessage(messages.errors.workbenchPathLookupFailed(safeError));
+  } catch (error: unknown) {
+    const safeError = error as AggregateError; // Promise.any() *should* only throw AggregateErrors
+    window.showErrorMessage(
+      messages.errors.workbenchPathLookupFailed(safeError),
+    );
     return;
   }
-
   const backupWorkbenchPath = `${workbenchPath}.bak`;
 
   if (!(await isPatchInstalled(workbenchPath))) {
@@ -140,7 +158,9 @@ async function uninstall(): Promise<void> {
   }
 
   window
-    .showInformationMessage(messages.userFacing.patchRemoved, { title: "Restart VSCode" })
+    .showInformationMessage(messages.userFacing.patchRemoved, {
+      title: "Restart VSCode",
+    })
     .then(reloadWindow);
 }
 
