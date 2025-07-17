@@ -10,8 +10,10 @@ export const messages = {
       `Failed to copy and/or delete backup: ${error}`,
     workbenchPathLookupFailed: (error: AggregateError): string =>
       `Unable to locate VSCode's workbench html file. Errors returned: ${error.errors}`,
+    patchingFailed: (error: Error): string => `Patching failed, Error: ${error}`,
     isDirectoryNotFile: (path: string): string =>
       `${path} is a directory, not a file.`,
+    loadingJavaScriptTemplateFailed: (error: NodeJS.ErrnoException): string => `Failed to load JavaScript template, Error: ${error}`,
     invalidBackgroundPath: "Unable to retrieve user-specified background path.",
     invalidCssTag: "Got invalid CSS tag.",
   },

@@ -14,6 +14,7 @@ type CandidateScore = {
 /**
  * Tests the provded path for whether it's a valid path that this we can access.
  *
+ * @async
  * @param {string} candidatePath The path to test.
  * @returns {Promise<CandidateScore>} A score for the path with whether it passes and if it failed, why it did.
  */
@@ -45,9 +46,11 @@ async function testCandidatePath(
 /**
  * Searches and returns the workbench html file path.
  *
- * @returns {Promise<string | null>} A promise that resolves either a `string` when the workbench html file is found or `null` if the lookup failed.
+ * @async
+ * @returns {Promise<string>} A promise that resolves either a `string` when the workbench html file is found or `null` if the lookup failed.
+ * @throws {AggregateError} Throws if all workbench file canidates also threw exceptions.
  */
-export async function locateWorkbench(): Promise<string | null> {
+export async function locateWorkbench(): Promise<string> {
   const basePath = path.join(env.appRoot, "out", "vs", "code");
 
   const candidateWorkbenchDirectories = [
@@ -82,13 +85,6 @@ export async function locateWorkbench(): Promise<string | null> {
   );
 
   // Run all promises at once and return the first promise that succeeds.
-  try {
-    const result = await Promise.any(candidatePromises);
-    return result;
-  } catch (error: unknown) {
-    // All candidates failed
-    const safeError = error as AggregateError; // Promise.any() *should* never return anything other than an AggregateError
-    window.showErrorMessage(messages.errors.workbenchPathLookupFailed(safeError));
-    return null;
-  }
+  const result = await Promise.any(candidatePromises);
+  return result;
 }

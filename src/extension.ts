@@ -16,10 +16,11 @@ function reloadWindow(): void {
  *
  * Steps:
  * - Locates the workbench html file.
- * - Ensures no backup exists.
+ * - Ensures the patch isn't already installed.
  * - Creates a workbench backup.
  * - Applies the patch.
  *
+ * @async
  * @returns {Promise<void>}
  */
 async function install(): Promise<void> {
@@ -41,7 +42,12 @@ async function install(): Promise<void> {
     window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
   }
 
-  await patch(workbenchPath);
+  try {
+    await patch(workbenchPath);
+  } catch (error: unknown) {
+    const safeError = error as Error;
+    window.showErrorMessage(messages.errors.patchingFailed(safeError));
+  }
 
   window
     .showInformationMessage(messages.userFacing.patchApplied, { title: "Restart VSCode" })
@@ -53,10 +59,11 @@ async function install(): Promise<void> {
  *
  * Steps:
  * - Locates the workbench html file.
- * - Ensures a backup exists.
+ * - Ensures the patch is installed.
  * - Restores the original workbench file.
  * - Reapplies the patch.
  *
+ * @async
  * @returns {Promise<void>}
  */
 async function reinstall(): Promise<void> {
@@ -78,7 +85,12 @@ async function reinstall(): Promise<void> {
     window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
   }
 
-  await patch(workbenchPath);
+  try {
+    await patch(workbenchPath);
+  } catch (error: unknown) {
+    const safeError = error as Error;
+    window.showErrorMessage(messages.errors.patchingFailed(safeError));
+  }
 
   window
     .showInformationMessage(messages.userFacing.patchApplied, { title: "Restart VSCode" })
@@ -90,16 +102,22 @@ async function reinstall(): Promise<void> {
  *
  * Steps:
  * - Locates the workbench html file.
- * - Ensures a backup exists.
+ * - Ensures the patch is installed.
  * - Restores the original workbench file.
  *
+ * @async
  * @returns {Promise<void>}
  */
 async function uninstall(): Promise<void> {
-  const workbenchPath = await locateWorkbench();
-  if (workbenchPath === null) {
+  let workbenchPath: string;
+  try {
+    workbenchPath = await locateWorkbench();
+  } catch (error) {
+    const safeError = error as AggregateError; // Promise.any() *should* only throw AggregateError
+    window.showErrorMessage(messages.errors.workbenchPathLookupFailed(safeError));
     return;
   }
+
   const backupWorkbenchPath = `${workbenchPath}.bak`;
 
   if (!(await isPatchInstalled(workbenchPath))) {
