@@ -42,12 +42,6 @@
 			"title": "Fluent Design",
 			"type": "object",
 			"properties": {
-				"vscode-fluent-design.compact": {
-					"type": "boolean",
-					"default": false,
-					"description": "Applies slightly-less padding around some of the elements. The difference is subtle but can help those with limited space.",
-					"scope": "application"
-				},
 				"vscode-fluent-design.enableWallpaper": {
 					"type": "boolean",
 					"default": false,
@@ -64,18 +58,6 @@
 					"type": "string",
 					"default": "#005fb8",
 					"description": "Accent color. Only HEX values are supported.",
-					"scope": "application"
-				},
-				"vscode-fluent-design.darkBackground": {
-					"type": "string",
-					"default": "#202020",
-					"description": "Background color for dark mode. Only HEX values are supported.",
-					"scope": "application"
-				},
-				"vscode-fluent-design.lightBackground": {
-					"type": "string",
-					"default": "#ffffff",
-					"description": "Background color for light mode. Only HEX values are supported.",
 					"scope": "application"
 				}
 			}
