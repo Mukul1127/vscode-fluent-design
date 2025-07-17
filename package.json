@@ -1,22 +1,24 @@
 {
 	"name": "vscode-fluent-design",
-	"type": "module",
-	"displayName": "Fluent Design",
-	"description": "Fluent Design Language Patch for VSCode",
 	"version": "1.0.0",
-	"engines": {
-		"vscode": "^1.93.0"
-	},
-	"categories": [
-		"Themes",
-		"Other"
-	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Mukul1127/vscode-fluent-design"
 	},
-	"activationEvents": [],
 	"main": "./dist/extension.js",
+	"devDependencies": {
+		"@biomejs/biome": "2.1.1",
+		"@types/node": "24.0.13",
+		"@types/vscode": "1.93.0",
+		"@vscode/vsce": "3.6.0",
+		"tsdown": "0.12.9",
+		"typescript": "5.8.3"
+	},
+	"activationEvents": [],
+	"categories": [
+		"Themes",
+		"Other"
+	],
 	"contributes": {
 		"commands": [
 			{
@@ -79,26 +81,21 @@
 			}
 		}
 	},
+	"description": "Fluent Design Language Patch for VSCode",
+	"displayName": "Fluent Design",
+	"engines": {
+		"vscode": "^1.93.0"
+	},
 	"scripts": {
 		"dev": "echo 'Open extension.ts in VSCode and then run your extension with F5",
 		"compile": "tsdown --silent --sourcemap",
 		"watch": "tsdown --silent -w --sourcemap",
 		"package": "tsdown --silent --minify && vsce package",
-		"check": "tsgo --noEmit",
+		"check": "tsc --noEmit",
 		"format": "biome format --write --unsafe",
 		"lint": "biome lint --write --unsafe",
 		"assist": "biome check --write --unsafe --formatter-enabled=false --linter-enabled=false",
-		"all": "tsgo --noEmit && biome check --write --unsafe"
+		"all": "tsc --noEmit && biome check --write --unsafe"
 	},
-	"devDependencies": {
-		"@biomejs/biome": "2.1.1",
-		"@types/node": "24.0.13",
-		"@types/vscode": "1.93.0",
-		"@typescript/native-preview": "7.0.0-dev.20250715.1",
-		"@vscode/vsce": "3.6.0",
-		"tsdown": "0.12.9"
-	},
-	"dependencies": {
-		"sharp": "0.34.3"
-	}
+	"type": "module"
 }

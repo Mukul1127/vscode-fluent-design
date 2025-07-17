@@ -2,14 +2,15 @@
 
 import type { PathLike } from "node:fs";
 import { copyFile, unlink } from "node:fs/promises";
+import type { LoggerType } from "./logger.ts";
+import { Logger } from "./logger.ts";
+
+const _logger: LoggerType = new Logger("backups.ts");
 
 /**
  * Creates a backup overwriting the original file if it exists.
  *
  * @async
- * @example
- * // Creates a backup, copying C:\file.txt to C:\file.backup.txt.
- * createBackup("C:\\file.txt", "C:\\file.backup.txt")
  * @param {PathLike} originalFilePath The original file path to copy from.
  * @param {PathLike} backupFilePath The backup file path to copy to.
  * @returns {Promise<void>} Resolves when the backup is created.
@@ -26,9 +27,6 @@ export async function createBackup(
  * Restores a backup overwriting the original file if it exists.
  *
  * @async
- * @example
- * // Restores a backup, copying C:\file.backup.txt to C:\file.txt.
- * restoreBackup("C:\\file.txt", "C:\\file.backup.txt")
  * @param {PathLike} backupFilePath The backup file path to copy from.
  * @param {PathLike} originalFilePath The original file path to copy to.
  * @returns {Promise<void>} Resolves when the restore is complete.
@@ -45,9 +43,6 @@ export async function restoreBackup(
  * Deletes the specified backup.
  *
  * @async
- * @example
- * // Deletes the backup at C:\file.backup.txt.
- * deleteBackup("C:\\file.backup.txt")
  * @param {PathLike} backupFilePath The backup file path to delete.
  * @returns {Promise<void>} Resolves when the deletion is complete.
  * @throws {NodeJS.ErrnoException} Throws if the backup doesn't exist.

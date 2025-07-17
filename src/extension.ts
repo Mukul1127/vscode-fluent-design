@@ -42,9 +42,8 @@ async function install(): Promise<void> {
     workbenchPath = await locateWorkbench();
   } catch (error: unknown) {
     const safeError = error as AggregateError; // Promise.any() *should* only throw AggregateErrors
-    window.showErrorMessage(
-      messages.errors.workbenchPathLookupFailed(safeError),
-    );
+    logger.error(`Failed to locate workbench path, error: ${safeError}`);
+    window.showInformationMessage(messages.checkLogs);
     return;
   }
   const backupWorkbenchPath = `${workbenchPath}.bak`;
@@ -55,7 +54,7 @@ async function install(): Promise<void> {
 
   if (await isPatchInstalled(workbenchPath)) {
     logger.info("Patch already installed, gracefully exiting.");
-    window.showInformationMessage(messages.userFacing.patchAlreadyInstalled);
+    window.showInformationMessage(messages.patchAlreadyInstalled);
     return;
   }
 
@@ -66,7 +65,7 @@ async function install(): Promise<void> {
   } catch (error: unknown) {
     const safeError = error as NodeJS.ErrnoException; // Filesystem Operations *should* only throw NodeJS.ErrnoExceptions.
     logger.error(`Failed to create backup, error: ${safeError}`);
-    window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
+    window.showInformationMessage(messages.checkLogs);
   }
 
   logger.info("Successfully created backup.");
@@ -76,7 +75,7 @@ async function install(): Promise<void> {
   } catch (error: unknown) {
     const safeError = error as Error;
     logger.error(`Failed to install patch, error: ${safeError}`);
-    window.showErrorMessage(messages.errors.patchingFailed(safeError));
+    window.showInformationMessage(messages.checkLogs);
   }
 
   logger.info("Successfully installed patch.");
@@ -84,7 +83,7 @@ async function install(): Promise<void> {
   logger.info("Finished installing Fluent Design Patch.");
 
   window
-    .showInformationMessage(messages.userFacing.patchApplied, {
+    .showInformationMessage(messages.patchApplied, {
       title: "Restart VSCode",
     })
     .then(reloadWindow);
@@ -110,9 +109,8 @@ async function reinstall(): Promise<void> {
     workbenchPath = await locateWorkbench();
   } catch (error: unknown) {
     const safeError = error as AggregateError; // Promise.any() *should* only throw AggregateErrors
-    window.showErrorMessage(
-      messages.errors.workbenchPathLookupFailed(safeError),
-    );
+    logger.error(`Failed to locate workbench path, error: ${safeError}`);
+    window.showInformationMessage(messages.checkLogs);
     return;
   }
   const backupWorkbenchPath = `${workbenchPath}.bak`;
@@ -123,7 +121,7 @@ async function reinstall(): Promise<void> {
 
   if (!(await isPatchInstalled(workbenchPath))) {
     logger.info("Patch not installed, gracefully exiting.");
-    window.showInformationMessage(messages.userFacing.patchNotInstalled);
+    window.showInformationMessage(messages.patchNotInstalled);
     return;
   }
 
@@ -134,7 +132,7 @@ async function reinstall(): Promise<void> {
   } catch (error: unknown) {
     const safeError = error as NodeJS.ErrnoException; // Filesystem Operations *should* only throw NodeJS.ErrnoExceptions.
     logger.error(`Failed to restore backup, error: ${safeError}`);
-    window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
+    window.showInformationMessage(messages.checkLogs);
   }
 
   logger.info("Successfully restored backup.");
@@ -144,7 +142,7 @@ async function reinstall(): Promise<void> {
   } catch (error: unknown) {
     const safeError = error as Error;
     logger.error(`Failed to install patch, error: ${safeError}`);
-    window.showErrorMessage(messages.errors.patchingFailed(safeError));
+    window.showInformationMessage(messages.checkLogs);
   }
 
   logger.info("Successfully installed patch.");
@@ -152,7 +150,7 @@ async function reinstall(): Promise<void> {
   logger.info("Finished reinstalling Fluent Design Patch.");
 
   window
-    .showInformationMessage(messages.userFacing.patchApplied, {
+    .showInformationMessage(messages.patchApplied, {
       title: "Restart VSCode",
     })
     .then(reloadWindow);
@@ -177,9 +175,8 @@ async function uninstall(): Promise<void> {
     workbenchPath = await locateWorkbench();
   } catch (error: unknown) {
     const safeError = error as AggregateError; // Promise.any() *should* only throw AggregateErrors
-    window.showErrorMessage(
-      messages.errors.workbenchPathLookupFailed(safeError),
-    );
+    logger.error(`Failed to locate workbench path, error: ${safeError}`);
+    window.showInformationMessage(messages.checkLogs);
     return;
   }
   const backupWorkbenchPath = `${workbenchPath}.bak`;
@@ -190,7 +187,7 @@ async function uninstall(): Promise<void> {
 
   if (!(await isPatchInstalled(workbenchPath))) {
     logger.info("Patch not installed, gracefully exiting.");
-    window.showInformationMessage(messages.userFacing.patchNotInstalled);
+    window.showInformationMessage(messages.patchNotInstalled);
     return;
   }
 
@@ -201,7 +198,7 @@ async function uninstall(): Promise<void> {
   } catch (error: unknown) {
     const safeError = error as NodeJS.ErrnoException; // Filesystem Operations *should* only throw NodeJS.ErrnoExceptions.
     logger.error(`Failed to restore backup, error: ${safeError}`);
-    window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
+    window.showInformationMessage(messages.checkLogs);
   }
 
   logger.info("Successfully restored backup.");
@@ -211,7 +208,7 @@ async function uninstall(): Promise<void> {
   } catch (error: unknown) {
     const safeError = error as NodeJS.ErrnoException; // Filesystem Operations *should* only throw NodeJS.ErrnoExceptions.
     logger.error(`Failed to delete backup, error: ${safeError}`);
-    window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
+    window.showInformationMessage(messages.checkLogs);
   }
 
   logger.info("Successfully deleted backup.");
@@ -219,7 +216,7 @@ async function uninstall(): Promise<void> {
   logger.info("Finished uninstalling Fluent Design Patch.");
 
   window
-    .showInformationMessage(messages.userFacing.patchRemoved, {
+    .showInformationMessage(messages.patchRemoved, {
       title: "Restart VSCode",
     })
     .then(reloadWindow);
