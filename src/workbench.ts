@@ -7,6 +7,13 @@ import { env, window } from "vscode";
 
 import { messages } from "./messages.ts";
 
+/**
+ * Converts a PathLike into string form, handles strings, Buffers, and URLs.
+ *
+ * @param {PathLike} pathLike The PathLike to convert.
+ * @returns {string} The PathLike in string form.
+ * @throws {TypeError} Throws if an invalid PathLike is given.
+ */
 function pathLikeToString(pathLike: PathLike): string {
   switch (true) {
     case typeof pathLike === "string":
@@ -23,6 +30,12 @@ function pathLikeToString(pathLike: PathLike): string {
   }
 }
 
+/**
+ * Concatenates PathLikes and returns a PathLike in string form.
+ * 
+ * @param {PathLike[]} paths The paths to concatenate. 
+ * @returns {PathLike} The concatenated path in string form.
+ */
 function joinPathLike(...paths: PathLike[]): PathLike {
   const stringPaths = paths.map(pathLikeToString);
   return path.join(...stringPaths);
