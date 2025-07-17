@@ -4,7 +4,9 @@ import type { OutputChannel } from "vscode";
 import { window } from "vscode";
 import pkg from "../package.json" with { type: "json" };
 
-const outputChannel: OutputChannel = window.createOutputChannel(pkg.name);
+const outputChannel: OutputChannel = window.createOutputChannel(
+  pkg.displayName,
+);
 
 export type LoggerType = {
   source: string;
@@ -24,7 +26,10 @@ export class Logger {
   }
 
   private log(level: string, message: string): void {
-    outputChannel.appendLine(`[${level}] [${this.source}] ${message}`);
+    const timestamp = new Date().toISOString();
+    outputChannel.appendLine(
+      `[${timestamp}] [${level}] [${this.source}] ${message}`,
+    );
   }
 
   debug(message: string): void {
@@ -46,4 +51,13 @@ export class Logger {
   fatal(message: string): void {
     this.log("FATAL", message);
   }
+}
+
+/**
+ * Shows the output channel with the extension's logs.
+ *
+ * @returns {void}
+ */
+export function showOutputChannel(): void {
+  outputChannel.show(true);
 }

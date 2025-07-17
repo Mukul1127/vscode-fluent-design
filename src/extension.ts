@@ -1,11 +1,11 @@
 /** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
 
 import type { PathLike } from "node:fs";
-import type { ExtensionContext } from "vscode";
+import type { Disposable, ExtensionContext } from "vscode";
 import { commands, window } from "vscode";
 import { createBackup, deleteBackup, restoreBackup } from "./backups.ts";
 import type { LoggerType } from "./logger.ts";
-import { Logger } from "./logger.ts";
+import { Logger, showOutputChannel } from "./logger.ts";
 import { messages } from "./messages.ts";
 import { isPatchInstalled, patch } from "./patch.ts";
 import { locateWorkbench } from "./workbench.ts";
@@ -18,6 +18,7 @@ const logger: LoggerType = new Logger("extension.ts");
  * @returns {void}
  */
 function reloadWindow(): void {
+  logger.info("Reloading window.");
   commands.executeCommand("workbench.action.reloadWindow");
 }
 
@@ -34,6 +35,8 @@ function reloadWindow(): void {
  * @returns {Promise<void>}
  */
 async function install(): Promise<void> {
+  logger.info("Started installing Fluent Design Patch.");
+
   let workbenchPath: PathLike;
   try {
     workbenchPath = await locateWorkbench();
@@ -46,7 +49,12 @@ async function install(): Promise<void> {
   }
   const backupWorkbenchPath = `${workbenchPath}.bak`;
 
+  logger.info(
+    `Finished locating workbench, original path: ${workbenchPath}, backup path: ${backupWorkbenchPath}`,
+  );
+
   if (await isPatchInstalled(workbenchPath)) {
+    logger.info("Patch already installed, gracefully exiting.");
     window.showInformationMessage(messages.userFacing.patchAlreadyInstalled);
     return;
   }
@@ -64,6 +72,8 @@ async function install(): Promise<void> {
     const safeError = error as Error;
     window.showErrorMessage(messages.errors.patchingFailed(safeError));
   }
+
+  logger.info("Finished installing Fluent Design Patch.");
 
   window
     .showInformationMessage(messages.userFacing.patchApplied, {
@@ -85,6 +95,8 @@ async function install(): Promise<void> {
  * @returns {Promise<void>}
  */
 async function reinstall(): Promise<void> {
+  logger.info("Started reinstalling Fluent Design Patch.");
+
   let workbenchPath: PathLike;
   try {
     workbenchPath = await locateWorkbench();
@@ -97,7 +109,12 @@ async function reinstall(): Promise<void> {
   }
   const backupWorkbenchPath = `${workbenchPath}.bak`;
 
+  logger.info(
+    `Finished locating workbench, original path: ${workbenchPath}, backup path: ${backupWorkbenchPath}`,
+  );
+
   if (!(await isPatchInstalled(workbenchPath))) {
+    logger.info("Patch not installed, gracefully exiting.");
     window.showInformationMessage(messages.userFacing.patchNotInstalled);
     return;
   }
@@ -115,6 +132,8 @@ async function reinstall(): Promise<void> {
     const safeError = error as Error;
     window.showErrorMessage(messages.errors.patchingFailed(safeError));
   }
+
+  logger.info("Finished reinstalling Fluent Design Patch.");
 
   window
     .showInformationMessage(messages.userFacing.patchApplied, {
@@ -135,6 +154,8 @@ async function reinstall(): Promise<void> {
  * @returns {Promise<void>}
  */
 async function uninstall(): Promise<void> {
+  logger.info("Started uninstalling Fluent Design Patch.");
+
   let workbenchPath: PathLike;
   try {
     workbenchPath = await locateWorkbench();
@@ -147,7 +168,12 @@ async function uninstall(): Promise<void> {
   }
   const backupWorkbenchPath = `${workbenchPath}.bak`;
 
+  logger.info(
+    `Finished locating workbench, original path: ${workbenchPath}, backup path: ${backupWorkbenchPath}`,
+  );
+
   if (!(await isPatchInstalled(workbenchPath))) {
+    logger.info("Patch not installed, gracefully exiting.");
     window.showInformationMessage(messages.userFacing.patchNotInstalled);
     return;
   }
@@ -166,12 +192,19 @@ async function uninstall(): Promise<void> {
     window.showErrorMessage(messages.errors.backupOperationFailed(safeError));
   }
 
+  logger.info("Finished uninstalling Fluent Design Patch.");
+
   window
     .showInformationMessage(messages.userFacing.patchRemoved, {
       title: "Restart VSCode",
     })
     .then(reloadWindow);
 }
+
+let installCommand: Disposable;
+let reinstallCommand: Disposable;
+let uninstallCommand: Disposable;
+let showLogsCommand: Disposable;
 
 /**
  * This function is called when the extension is activated
@@ -180,22 +213,45 @@ async function uninstall(): Promise<void> {
  * @returns {void}
  */
 export function activate(context: ExtensionContext): void {
-  logger.debug("Extension Loaded!");
+  logger.info("Extension started activating.");
 
-  const installCommand = commands.registerCommand(
+  installCommand = commands.registerCommand(
     "vscode-fluent-design.install",
     install,
   );
-  const reinstallCommand = commands.registerCommand(
+  reinstallCommand = commands.registerCommand(
     "vscode-fluent-design.reinstall",
     reinstall,
   );
-  const uninstallCommand = commands.registerCommand(
+  uninstallCommand = commands.registerCommand(
     "vscode-fluent-design.uninstall",
     uninstall,
+  );
+  showLogsCommand = commands.registerCommand(
+    "vscode-fluent-design.showLogs",
+    showOutputChannel,
   );
 
   context.subscriptions.push(installCommand);
   context.subscriptions.push(reinstallCommand);
   context.subscriptions.push(uninstallCommand);
+  context.subscriptions.push(showLogsCommand);
+
+  logger.info("Extension finished activating.");
+}
+
+/**
+ * This function is called when the extension is activated
+ *
+ * @returns {void}
+ */
+export function deactivate(): void {
+  logger.info("Extension started deactivating.");
+
+  installCommand.dispose();
+  reinstallCommand.dispose();
+  uninstallCommand.dispose();
+  showLogsCommand.dispose();
+
+  logger.info("Extension finished deactivating.");
 }

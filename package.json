@@ -1,7 +1,7 @@
 {
 	"name": "vscode-fluent-design",
 	"type": "module",
-	"displayName": "VSCode Fluent Design",
+	"displayName": "Fluent Design",
 	"description": "Fluent Design Language Patch for VSCode",
 	"version": "1.0.0",
 	"engines": {
@@ -30,6 +30,10 @@
 			{
 				"command": "vscode-fluent-design.uninstall",
 				"title": "Fluent Design: Uninstall"
+			},
+			{
+				"command": "vscode-fluent-design.showLogs",
+				"title": "Fluent Design: Show Logs"
 			}
 		],
 		"configuration": {
