@@ -3,4 +3,8 @@
 */**
 
 # Whitelist what we need
+!COPYING.md
+!COPYING.txt
+!LICENSE.md
+!LICENSE.txt
 !dist/**/*

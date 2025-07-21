@@ -1,6 +1,7 @@
 {
   "name": "vscode-fluent-design",
   "version": "1.0.0",
+  "license": "GPL-3.0-only",
   "repository": {
     "type": "git",
     "url": "https://github.com/Mukul1127/vscode-fluent-design"
@@ -72,6 +73,7 @@
     "dev": "echo 'Open extension.ts in VSCode and then run the extension with F5",
     "compile": "tsup",
     "package": "tsup --minify && vsce package --no-dependencies",
+    "clean": "(rm -r dist || true) && (rm *.vsix || true)",
     "check": "tsc",
     "format": "prettier . --write",
     "lint": "eslint . --fix"
