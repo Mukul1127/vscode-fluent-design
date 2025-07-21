@@ -19,7 +19,7 @@ export type LoggerType = {
   error(message: string): void;
 };
 
-export class Logger {
+export class Logger implements LoggerType {
   source: string;
 
   constructor(source: string) {
@@ -68,6 +68,6 @@ export function showOutputChannel(): void {
  *
  * @returns {void}
  */
-export function dispose(): void {
+export function disposeOutputChannel(): void {
   outputChannel.dispose();
 }

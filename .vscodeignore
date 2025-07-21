@@ -1,6 +1,6 @@
-# Ignore everything
+# Ignore everything by default
 *
 */**
 
-# Whitelist what you need
+# Whitelist what we need
 !dist/**/*

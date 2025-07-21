@@ -44,9 +44,7 @@ async function buildAll(): Promise<void> {
   // Build contexts
   let ctxs: BuildContext<BuildOptions>[] = [];
   try {
-    ctxs = await Promise.all(
-      contexts.map((opts) => context(opts)),
-    );
+    ctxs = await Promise.all(contexts.map((opts) => context(opts)));
   } catch (error: unknown) {
     console.error(error);
   }

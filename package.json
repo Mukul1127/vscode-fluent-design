@@ -8,10 +8,10 @@
 	"main": "./dist/extension.js",
 	"devDependencies": {
 		"@biomejs/biome": "2.1.2",
-		"@types/node": "24.0.14",
+		"@types/node": "24.0.15",
 		"@types/vscode": "1.93.0",
 		"@vscode/vsce": "3.6.0",
-		"esbuild": "0.25.6",
+		"esbuild": "0.25.8",
 		"typescript": "5.8.3"
 	},
 	"activationEvents": [],
@@ -32,10 +32,6 @@
 			{
 				"command": "vscode-fluent-design.uninstall",
 				"title": "Fluent Design: Uninstall"
-			},
-			{
-				"command": "vscode-fluent-design.showLogs",
-				"title": "Fluent Design: Show Logs"
 			}
 		],
 		"configuration": {

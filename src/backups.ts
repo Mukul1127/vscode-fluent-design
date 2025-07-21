@@ -1,52 +1,47 @@
 /** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
 
-import type { PathLike } from "node:fs";
-import { copyFile, unlink } from "node:fs/promises";
-import type { LoggerType } from "@src/logger";
-import { Logger } from "@src/logger";
-
-const _logger: LoggerType = new Logger("backups.ts");
+import { cp, rm } from "node:fs/promises";
 
 /**
- * Creates a backup overwriting the original file if it exists.
+ * Creates a backup overwriting the original if it exists.
  *
  * @async
- * @param {PathLike} originalFilePath The original file path to copy from.
- * @param {PathLike} backupFilePath The backup file path to copy to.
+ * @param {string} originalFilePath The original path to copy from.
+ * @param {string} backupFilePath The backup path to copy to.
  * @returns {Promise<void>} Resolves when the backup is created.
- * @throws {NodeJS.ErrnoException} Throws if one of the files couldn't be accessed.
+ * @throws {NodeJS.ErrnoException} Throws if one of the paths couldn't be accessed.
  */
 export async function createBackup(
-  originalFilePath: PathLike,
-  backupFilePath: PathLike,
+  originalFilePath: string,
+  backupFilePath: string,
 ): Promise<void> {
-  await copyFile(originalFilePath, backupFilePath);
+  await cp(originalFilePath, backupFilePath, { recursive: true });
 }
 
 /**
- * Restores a backup overwriting the original file if it exists.
+ * Restores a backup overwriting the original if it exists.
  *
  * @async
- * @param {PathLike} backupFilePath The backup file path to copy from.
- * @param {PathLike} originalFilePath The original file path to copy to.
+ * @param {string} backupFilePath The backup path to copy from.
+ * @param {string} originalFilePath The original path to copy to.
  * @returns {Promise<void>} Resolves when the restore is complete.
- * @throws {NodeJS.ErrnoException} Throws if one of the files couldn't be accessed.
+ * @throws {NodeJS.ErrnoException} Throws if one of the paths couldn't be accessed.
  */
 export async function restoreBackup(
-  backupFilePath: PathLike,
-  originalFilePath: PathLike,
+  backupFilePath: string,
+  originalFilePath: string,
 ): Promise<void> {
-  await copyFile(backupFilePath, originalFilePath);
+  await cp(backupFilePath, originalFilePath, { recursive: true });
 }
 
 /**
  * Deletes the specified backup.
  *
  * @async
- * @param {PathLike} backupFilePath The backup file path to delete.
+ * @param {string} backupFilePath The backup path to delete.
  * @returns {Promise<void>} Resolves when the deletion is complete.
  * @throws {NodeJS.ErrnoException} Throws if the backup doesn't exist.
  */
-export async function deleteBackup(backupFilePath: PathLike): Promise<void> {
-  await unlink(backupFilePath);
+export async function deleteBackup(backupFilePath: string): Promise<void> {
+  await rm(backupFilePath, { recursive: true });
 }
