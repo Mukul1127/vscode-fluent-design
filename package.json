@@ -1,78 +1,80 @@
 {
-	"name": "vscode-fluent-design",
-	"version": "1.0.0",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/Mukul1127/vscode-fluent-design"
-	},
-	"main": "./dist/extension.js",
-	"devDependencies": {
-		"@biomejs/biome": "2.1.2",
-		"@types/node": "24.0.15",
-		"@types/vscode": "1.93.0",
-		"@vscode/vsce": "3.6.0",
-		"esbuild": "0.25.8",
-		"typescript": "5.8.3"
-	},
-	"activationEvents": [],
-	"categories": [
-		"Themes",
-		"Other"
-	],
-	"contributes": {
-		"commands": [
-			{
-				"command": "vscode-fluent-design.install",
-				"title": "Fluent Design: Install"
-			},
-			{
-				"command": "vscode-fluent-design.reinstall",
-				"title": "Fluent Design: Reinstall"
-			},
-			{
-				"command": "vscode-fluent-design.uninstall",
-				"title": "Fluent Design: Uninstall"
-			}
-		],
-		"configuration": {
-			"title": "Fluent Design",
-			"type": "object",
-			"properties": {
-				"vscode-fluent-design.enableWallpaper": {
-					"type": "boolean",
-					"default": false,
-					"description": "Enable sampling the specified wallpaper",
-					"scope": "application"
-				},
-				"vscode-fluent-design.wallpaperPath": {
-					"type": "string",
-					"default": "C:\\Windows\\Web\\Wallpaper\\Windows\\img0.jpg",
-					"description": "Path to background image (JPEG, PNG, WebP, AVIF, GIF, SVG or TIFF).\nBy default, it will use the Windows 11 light mode wallpaper.",
-					"scope": "application"
-				},
-				"vscode-fluent-design.accent": {
-					"type": "string",
-					"default": "#005fb8",
-					"description": "Accent color. Only HEX values are supported.",
-					"scope": "application"
-				}
-			}
-		}
-	},
-	"description": "Fluent Design Language Patch for VSCode",
-	"displayName": "Fluent Design",
-	"engines": {
-		"vscode": "^1.93.0"
-	},
-	"scripts": {
-		"dev": "echo 'Open extension.ts in VSCode and then run the extension with F5",
-		"compile": "bun scripts/esbuild.ts",
-		"package": "bun scripts/esbuild.ts --production && vsce package --no-dependencies",
-		"check": "tsc",
-		"format": "biome format --write --unsafe",
-		"lint": "biome lint --write --unsafe",
-		"assist": "biome check --write --unsafe --formatter-enabled=false --linter-enabled=false",
-		"all": "tsc && biome check --write --unsafe"
-	},
-	"type": "module"
+  "name": "vscode-fluent-design",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mukul1127/vscode-fluent-design"
+  },
+  "main": "./dist/extension.js",
+  "devDependencies": {
+    "@eslint/js": "9.31.0",
+    "@types/node": "24.0.15",
+    "@types/vscode": "1.93.0",
+    "@vscode/vsce": "3.6.0",
+    "eslint": "9.31.0",
+    "eslint-config-prettier": "10.1.8",
+    "prettier": "3.6.2",
+    "tsup": "8.5.0",
+    "typescript": "5.8.3",
+    "typescript-eslint": "8.38.0"
+  },
+  "activationEvents": [],
+  "categories": [
+    "Themes",
+    "Other"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscode-fluent-design.install",
+        "title": "Fluent Design: Install"
+      },
+      {
+        "command": "vscode-fluent-design.reinstall",
+        "title": "Fluent Design: Reinstall"
+      },
+      {
+        "command": "vscode-fluent-design.uninstall",
+        "title": "Fluent Design: Uninstall"
+      }
+    ],
+    "configuration": {
+      "title": "Fluent Design",
+      "type": "object",
+      "properties": {
+        "vscode-fluent-design.enableWallpaper": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable sampling the specified wallpaper",
+          "scope": "application"
+        },
+        "vscode-fluent-design.wallpaperPath": {
+          "type": "string",
+          "default": "C:\\Windows\\Web\\Wallpaper\\Windows\\img0.jpg",
+          "description": "Path to background image (JPEG, PNG, WebP, AVIF, GIF, SVG or TIFF).\nBy default, it will use the Windows 11 light mode wallpaper.",
+          "scope": "application"
+        },
+        "vscode-fluent-design.accent": {
+          "type": "string",
+          "default": "#005fb8",
+          "description": "Accent color. Only HEX values are supported.",
+          "scope": "application"
+        }
+      }
+    }
+  },
+  "description": "Fluent Design Language Patch for VSCode",
+  "displayName": "Fluent Design",
+  "engines": {
+    "vscode": "^1.93.0"
+  },
+  "scripts": {
+    "dev": "echo 'Open extension.ts in VSCode and then run the extension with F5",
+    "compile": "tsup",
+    "package": "tsup --minify && vsce package --no-dependencies",
+    "check": "tsc",
+    "format": "prettier . --write",
+    "lint": "eslint . --fix"
+  },
+  "type": "module"
 }

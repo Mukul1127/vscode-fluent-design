@@ -1,12 +1,9 @@
-/** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
-
-import type { LoggerType } from "@src/logger";
-import { Logger, showOutputChannel, disposeOutputChannel } from "@src/logger";
+import { disposeOutputChannel, Logger, showOutputChannel } from "@src/logger";
 import { messages } from "@src/messages";
 import type { Disposable } from "vscode";
 import { commands, window } from "vscode";
 
-const logger: LoggerType = new Logger("extension.ts");
+const logger = new Logger("extension.ts");
 
 /**
  * Reloads the window.
@@ -14,8 +11,12 @@ const logger: LoggerType = new Logger("extension.ts");
  * @returns {void}
  */
 function reloadWindow(): void {
-  logger.info("Reloading window.");
-  commands.executeCommand("workbench.action.reloadWindow");
+  window
+    .showInformationMessage(messages.patchModified, "Restart VSCode")
+    .then((): void => {
+      logger.info("Reloading window.");
+      commands.executeCommand("workbench.action.reloadWindow");
+    });
 }
 
 /**
@@ -25,11 +26,7 @@ function reloadWindow(): void {
  * @returns {Promise<void>} A promise that resolves when the patch is installed.
  */
 async function install(): Promise<void> {
-  window
-    .showInformationMessage(messages.patchApplied, {
-      title: "Restart VSCode",
-    })
-    .then(reloadWindow);
+  reloadWindow();
 }
 
 /**
@@ -39,11 +36,7 @@ async function install(): Promise<void> {
  * @returns {Promise<void>} A promise that resolves when the patch is reinstalled.
  */
 async function reinstall(): Promise<void> {
-  window
-    .showInformationMessage(messages.patchApplied, {
-      title: "Restart VSCode",
-    })
-    .then(reloadWindow);
+  reloadWindow();
 }
 
 /**
@@ -53,9 +46,7 @@ async function reinstall(): Promise<void> {
  * @returns {Promise<void>} A promise that resolves when the patch is uninstalled.
  */
 async function uninstall(): Promise<void> {
-  window
-    .showInformationMessage(messages.patchRemoved, "Restart VSCode")
-    .then(reloadWindow);
+  reloadWindow();
 }
 
 let installCommand: Disposable;

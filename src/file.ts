@@ -1,12 +1,9 @@
-/** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
-
 import type { Stats } from "node:fs";
 import { glob, stat } from "node:fs/promises";
-import type { LoggerType } from "@src/logger";
 import { Logger } from "@src/logger";
 import { env } from "vscode";
 
-const logger: LoggerType = new Logger("workbench.ts");
+const logger = new Logger("workbench.ts");
 
 /**
  * Tests the provded path for whether it's a valid file that is accessible.
@@ -51,11 +48,14 @@ export async function locateFile(globPattern: string): Promise<string> {
       return entry;
     } catch (error: unknown) {
       const safeError: NodeJS.ErrnoException = error as NodeJS.ErrnoException;
-      logger.warn(`Path ${entry} failed validation, error: ${safeError}`);
+      logger.warn(
+        `Path ${entry} failed validation, error: ${safeError.message}`,
+      );
     }
   }
 
   throw new Error("Failed to glob file.");
 }
 
-export const workbenchGlob = "out/vs/code/{electron-browser,electron-sandbox}/workbench/{workbench.html,workbench.esm.html}";
+export const workbenchGlob =
+  "out/vs/code/{electron-browser,electron-sandbox}/workbench/{workbench.html,workbench.esm.html}";

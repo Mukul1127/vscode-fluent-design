@@ -1,19 +1,19 @@
 {
-	"compilerOptions": {
-		"moduleResolution": "bundler",
-		"module": "esnext",
-		"target": "esnext",
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "module": "esnext",
+    "target": "esnext",
 
-		"strict": true,
-		"noEmit": true,
+    "strict": true,
+    "noEmit": true,
 
-		"resolveJsonModule": true,
-		"allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
 
-		"paths": {
-			"@src/*": ["./src/*"],
-			"@packageJson": ["./package.json"]
-		}
-	},
-	"include": ["src", "scripts"]
+    "paths": {
+      "@src/*": ["./src/*"],
+      "@packageJson": ["./package.json"]
+    }
+  },
+  "include": ["src", "scripts", "eslint.config.ts", "prettier.config.ts", "tsup.config.ts"]
 }

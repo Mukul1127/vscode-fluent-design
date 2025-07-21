@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
-
 import { cp, rm } from "node:fs/promises";
 
 /**
@@ -15,7 +13,10 @@ export async function createBackup(
   originalFilePath: string,
   backupFilePath: string,
 ): Promise<void> {
-  await cp(originalFilePath, backupFilePath, { recursive: true });
+  await cp(originalFilePath, backupFilePath, {
+    recursive: true,
+    errorOnExist: true,
+  });
 }
 
 /**
@@ -24,14 +25,17 @@ export async function createBackup(
  * @async
  * @param {string} backupFilePath The backup path to copy from.
  * @param {string} originalFilePath The original path to copy to.
- * @returns {Promise<void>} Resolves when the restore is complete.
+ * @returns {Promise<void>} Resolves when the backup is restored.
  * @throws {NodeJS.ErrnoException} Throws if one of the paths couldn't be accessed.
  */
 export async function restoreBackup(
   backupFilePath: string,
   originalFilePath: string,
 ): Promise<void> {
-  await cp(backupFilePath, originalFilePath, { recursive: true });
+  await cp(backupFilePath, originalFilePath, {
+    recursive: true,
+    errorOnExist: true,
+  });
 }
 
 /**
@@ -39,8 +43,8 @@ export async function restoreBackup(
  *
  * @async
  * @param {string} backupFilePath The backup path to delete.
- * @returns {Promise<void>} Resolves when the deletion is complete.
- * @throws {NodeJS.ErrnoException} Throws if the backup doesn't exist.
+ * @returns {Promise<void>} Resolves when the backup is deleted.
+ * @throws {NodeJS.ErrnoException} Throws if the path couldn't be accessed.
  */
 export async function deleteBackup(backupFilePath: string): Promise<void> {
   await rm(backupFilePath, { recursive: true });

@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/nursery/noUnresolvedImports: Biome disallows NodeJS built-ins and is incompatible with the VSCode API */
-
 import pkg from "@packageJson" with { type: "json" };
 import type { LogOutputChannel } from "vscode";
 import { window } from "vscode";
@@ -9,17 +7,7 @@ const outputChannel: LogOutputChannel = window.createOutputChannel(
   { log: true },
 );
 
-export type LoggerType = {
-  source: string;
-
-  trace(message: string): void;
-  debug(message: string): void;
-  info(message: string): void;
-  warn(message: string): void;
-  error(message: string): void;
-};
-
-export class Logger implements LoggerType {
+export class Logger {
   source: string;
 
   constructor(source: string) {
@@ -27,30 +15,27 @@ export class Logger implements LoggerType {
   }
 
   private log(message: string, func: (funcMessage: string) => void): void {
-    if (func === null) {
-      return;
-    }
     func(`[${this.source}] ${message}`);
   }
 
   trace(message: string): void {
-    this.log(message, outputChannel.trace);
+    this.log(message, outputChannel.trace.bind(outputChannel));
   }
 
   debug(message: string): void {
-    this.log(message, outputChannel.debug);
+    this.log(message, outputChannel.debug.bind(outputChannel));
   }
 
   info(message: string): void {
-    this.log(message, outputChannel.info);
+    this.log(message, outputChannel.info.bind(outputChannel));
   }
 
   warn(message: string): void {
-    this.log(message, outputChannel.warn);
+    this.log(message, outputChannel.warn.bind(outputChannel));
   }
 
   error(message: string): void {
-    this.log(message, outputChannel.error);
+    this.log(message, outputChannel.error.bind(outputChannel));
   }
 }
 
