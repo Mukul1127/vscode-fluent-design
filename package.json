@@ -9,14 +9,13 @@
   "main": "./dist/extension.js",
   "devDependencies": {
     "@eslint/js": "9.31.0",
-    "@swc/core": "1.13.1",
+    "@rslib/core": "0.11.0",
     "@types/node": "24.0.15",
     "@types/vscode": "1.93.0",
     "@vscode/vsce": "3.6.0",
     "eslint": "9.31.0",
     "eslint-config-prettier": "10.1.8",
     "prettier": "3.6.2",
-    "tsup": "8.5.0",
     "typescript": "5.8.3",
     "typescript-eslint": "8.38.0"
   },
@@ -71,9 +70,8 @@
     "vscode": "^1.93.0"
   },
   "scripts": {
-    "dev": "echo 'Open extension.ts in VSCode and then run the extension with F5",
-    "compile": "tsup",
-    "package": "tsup --minify && vsce package --no-dependencies",
+    "compile": "rslib build",
+    "package": "bun run compile --env-mode production && vsce package --no-dependencies",
     "clean": "(rm -r dist || true) && (rm *.vsix || true)",
     "check": "tsc",
     "format": "prettier . --write",

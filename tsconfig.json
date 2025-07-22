@@ -13,14 +13,16 @@
     "paths": {
       "@src/*": ["./src/*"],
       "@packageJson": ["./package.json"]
-    }
+    },
+
+    "isolatedModules": true
   },
   "include": [
     "src",
     "scripts",
     "eslint.config.ts",
     "prettier.config.ts",
-    "tsup.config.ts"
+    "rslib.config.ts"
   ],
   "exclude": ["node_modules/**", "dist/**", "*.vsix"]
 }
