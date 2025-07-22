@@ -1,5 +1,5 @@
 import { stat } from "node:fs/promises";
-import { Logger } from "@src/logger";
+import { Logger } from "/src/logger";
 import { env } from "vscode";
 
 import { glob } from "glob";

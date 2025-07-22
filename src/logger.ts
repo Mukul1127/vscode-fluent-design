@@ -1,4 +1,4 @@
-import pkg from "@packageJson" with { type: "json" };
+import pkg from "/package.json" with { type: "json" };
 import type { LogOutputChannel } from "vscode";
 import { window } from "vscode";
 

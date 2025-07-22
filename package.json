@@ -9,10 +9,10 @@
   "main": "./dist/extension.js",
   "devDependencies": {
     "@eslint/js": "9.31.0",
-    "@rslib/core": "0.11.0",
     "@types/node": "24.0.15",
     "@types/vscode": "1.93.0",
     "@vscode/vsce": "3.6.0",
+    "esbuild": "0.25.8",
     "eslint": "9.31.0",
     "eslint-config-prettier": "10.1.8",
     "glob": "11.0.3",
@@ -71,8 +71,8 @@
     "vscode": "^1.93.0"
   },
   "scripts": {
-    "compile": "rslib build",
-    "package": "bun run compile --env-mode production && vsce package --no-dependencies",
+    "watch": "bun esbuild.ts --watch",
+    "package": "bun esbuild.ts --production && vsce package --no-dependencies",
     "clean": "(rm -r dist || true) && (rm *.vsix || true)",
     "check": "tsc",
     "format": "prettier . --write",

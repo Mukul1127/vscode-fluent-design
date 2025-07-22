@@ -12,12 +12,17 @@
     "allowImportingTsExtensions": true,
 
     "paths": {
-      "@src/*": ["./src/*"],
-      "@packageJson": ["./package.json"]
+      "/*": ["./*"]
     },
 
     "isolatedModules": true
   },
-  "include": ["src/**/*", "eslint.config.ts", "prettier.config.ts", "rslib.config.ts"],
+  "include": [
+    "src/**/*",
+    "eslint.config.ts",
+    "prettier.config.ts",
+    "esbuild.config.ts",
+    "esbuild.ts"
+  ],
   "exclude": ["node_modules/**/*", "dist/**/*", "*.vsix"]
 }

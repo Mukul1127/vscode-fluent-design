@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
-import { locateFile } from "@src/file";
-import { Logger } from "@src/logger";
+import { locateFile } from "/src/file";
+import { Logger } from "/src/logger";
 
 const logger = new Logger("patch.ts");
 

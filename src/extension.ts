@@ -1,5 +1,5 @@
-import { disposeOutputChannel, Logger, showOutputChannel } from "@src/logger";
-import { messages } from "@src/messages";
+import { disposeOutputChannel, Logger, showOutputChannel } from "/src/logger";
+import { messages } from "/src/messages";
 import type { Disposable } from "vscode";
 import { commands, window } from "vscode";
 import { isPatchInstalled } from "./patch";
