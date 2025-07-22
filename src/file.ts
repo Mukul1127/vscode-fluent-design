@@ -1,61 +1,44 @@
-import type { Stats } from "node:fs";
-import { glob, stat } from "node:fs/promises";
+import { stat } from "node:fs/promises";
 import { Logger } from "@src/logger";
 import { env } from "vscode";
+
+import { glob } from "glob";
 
 const logger = new Logger("workbench.ts");
 
 /**
- * Tests the provded path for whether it's a valid file that is accessible.
+ * Searches and returns the file path.
  *
  * @async
- * @param {string} filePath The path to test.
- * @returns {Promise<void>}
- * @throws {NodeJS.ErrnoException} If the path is invalid (failed to stat, is a directory, etc).
- */
-async function validatePath(filePath: string): Promise<void> {
-  const statResult: Stats = await stat(filePath);
-  if (statResult.isDirectory()) {
-    // Throw NodeJS.ErrnoException with all parameters.
-    const err: NodeJS.ErrnoException = Object.assign(
-      new Error(`Path: ${filePath} is a directory`),
-      {
-        code: "EISDIR",
-        path: filePath,
-        syscall: "stat",
-        name: "Error",
-      },
-    );
-
-    throw err;
-  }
-}
-
-/**
- * Searches and returns the workbench html file path.
- *
- * @async
- * @returns {Promise<string>} The path to the workbench file.
- * @throws {AggregateError} If all workbench file path canidates were invalid.
+ * @param {string} globPattern The glob pattern to search for.
+ * @returns {Promise<string>} The path to the file.
+ * @throws {Error} If no valid files were found.
  */
 export async function locateFile(globPattern: string): Promise<string> {
   logger.info(`Started locating file with glob pattern: ${globPattern}`);
 
-  for await (const entry of glob(globPattern, { cwd: env.appRoot })) {
-    try {
-      await validatePath(entry);
-      logger.info(`Finished locating file, file path: ${entry}`);
-      return entry;
-    } catch (error: unknown) {
-      const safeError: NodeJS.ErrnoException = error as NodeJS.ErrnoException;
-      logger.warn(
-        `Path ${entry} failed validation, error: ${safeError.message}`,
-      );
-    }
+  const entries: string[] = await glob(globPattern, {
+    cwd: env.appRoot,
+    nodir: true,
+  });
+
+  if (entries.length === 0) {
+    throw new Error("No files matched the glob pattern.");
   }
 
-  throw new Error("Failed to glob file.");
-}
+  const result = await Promise.any(
+    entries.map(async (entry) => {
+      try {
+        await stat(entry); // Ensure we have permmissions to access file.
+        logger.info(`Finished locating file, file path: ${entry}`);
+        return entry;
+      } catch (error: unknown) {
+        const safeError: NodeJS.ErrnoException = error as NodeJS.ErrnoException;
+        logger.warn(`Path ${entry} failed validation, error: ${safeError.message}`);
+        throw safeError; // Propegate error so promise fails.
+      }
+    }),
+  );
 
-export const workbenchGlob =
-  "out/vs/code/{electron-browser,electron-sandbox}/workbench/{workbench.html,workbench.esm.html}";
+  return result;
+}

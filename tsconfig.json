@@ -8,6 +8,7 @@
     "noEmit": true,
 
     "resolveJsonModule": true,
+    "allowJs": true,
     "allowImportingTsExtensions": true,
 
     "paths": {
@@ -17,12 +18,6 @@
 
     "isolatedModules": true
   },
-  "include": [
-    "src",
-    "scripts",
-    "eslint.config.ts",
-    "prettier.config.ts",
-    "rslib.config.ts"
-  ],
-  "exclude": ["node_modules/**", "dist/**", "*.vsix"]
+  "include": ["src/**/*", "eslint.config.ts", "prettier.config.ts", "rslib.config.ts"],
+  "exclude": ["node_modules/**/*", "dist/**/*", "*.vsix"]
 }

@@ -2,10 +2,7 @@ import pkg from "@packageJson" with { type: "json" };
 import type { LogOutputChannel } from "vscode";
 import { window } from "vscode";
 
-const outputChannel: LogOutputChannel = window.createOutputChannel(
-  pkg.displayName,
-  { log: true },
-);
+const outputChannel: LogOutputChannel = window.createOutputChannel(pkg.displayName, { log: true });
 
 export class Logger {
   source: string;

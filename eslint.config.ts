@@ -16,6 +16,6 @@ export default tseslint.config(
     },
   },
   {
-    ignores: ["node_modules/**", "dist/**", "*.vsix"],
+    ignores: ["node_modules/**/*", "dist/**/*", "*.vsix", "src/modifyFiles/**/*"],
   },
 );

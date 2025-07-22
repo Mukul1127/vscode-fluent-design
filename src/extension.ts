@@ -2,6 +2,7 @@ import { disposeOutputChannel, Logger, showOutputChannel } from "@src/logger";
 import { messages } from "@src/messages";
 import type { Disposable } from "vscode";
 import { commands, window } from "vscode";
+import { isPatchInstalled } from "./patch";
 
 const logger = new Logger("extension.ts");
 
@@ -11,12 +12,10 @@ const logger = new Logger("extension.ts");
  * @returns {void}
  */
 function reloadWindow(): void {
-  window
-    .showInformationMessage(messages.patchModified, "Restart VSCode")
-    .then((): void => {
-      logger.info("Reloading window.");
-      commands.executeCommand("workbench.action.reloadWindow");
-    });
+  window.showInformationMessage(messages.patchModified, "Restart VSCode").then((): void => {
+    logger.info("Reloading window.");
+    commands.executeCommand("workbench.action.reloadWindow");
+  });
 }
 
 /**
@@ -26,6 +25,12 @@ function reloadWindow(): void {
  * @returns {Promise<void>} A promise that resolves when the patch is installed.
  */
 async function install(): Promise<void> {
+  const patchInstalled = await isPatchInstalled();
+  if (patchInstalled) {
+    logger.error("Patch is already installed.");
+    return;
+  }
+
   reloadWindow();
 }
 
@@ -36,6 +41,12 @@ async function install(): Promise<void> {
  * @returns {Promise<void>} A promise that resolves when the patch is reinstalled.
  */
 async function reinstall(): Promise<void> {
+  const patchInstalled = await isPatchInstalled();
+  if (!patchInstalled) {
+    logger.error("Patch is not installed.");
+    return;
+  }
+
   reloadWindow();
 }
 
@@ -46,6 +57,12 @@ async function reinstall(): Promise<void> {
  * @returns {Promise<void>} A promise that resolves when the patch is uninstalled.
  */
 async function uninstall(): Promise<void> {
+  const patchInstalled = await isPatchInstalled();
+  if (!patchInstalled) {
+    logger.error("Patch is not installed.");
+    return;
+  }
+
   reloadWindow();
 }
 
@@ -61,18 +78,9 @@ let uninstallCommand: Disposable;
 export function activate(): void {
   logger.info("Extension started activating.");
 
-  installCommand = commands.registerCommand(
-    "vscode-fluent-design.install",
-    install,
-  );
-  reinstallCommand = commands.registerCommand(
-    "vscode-fluent-design.reinstall",
-    reinstall,
-  );
-  uninstallCommand = commands.registerCommand(
-    "vscode-fluent-design.uninstall",
-    uninstall,
-  );
+  installCommand = commands.registerCommand("vscode-fluent-design.install", install);
+  reinstallCommand = commands.registerCommand("vscode-fluent-design.reinstall", reinstall);
+  uninstallCommand = commands.registerCommand("vscode-fluent-design.uninstall", uninstall);
 
   showOutputChannel();
 

@@ -13,10 +13,8 @@ export async function createBackup(
   originalFilePath: string,
   backupFilePath: string,
 ): Promise<void> {
-  await cp(originalFilePath, backupFilePath, {
-    recursive: true,
-    errorOnExist: true,
-  });
+  await rm(backupFilePath, { recursive: true });
+  await cp(originalFilePath, backupFilePath, { recursive: true });
 }
 
 /**
@@ -32,10 +30,8 @@ export async function restoreBackup(
   backupFilePath: string,
   originalFilePath: string,
 ): Promise<void> {
-  await cp(backupFilePath, originalFilePath, {
-    recursive: true,
-    errorOnExist: true,
-  });
+  await rm(originalFilePath, { recursive: true });
+  await cp(backupFilePath, originalFilePath, { recursive: true });
 }
 
 /**
