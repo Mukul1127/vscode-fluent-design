@@ -1,26 +1,4 @@
 {
-  "name": "vscode-fluent-design",
-  "version": "1.0.0",
-  "license": "GPL-3.0-only",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Mukul1127/vscode-fluent-design"
-  },
-  "main": "./dist/extension.js",
-  "devDependencies": {
-    "@eslint/js": "9.31.0",
-    "@types/node": "24.0.15",
-    "@types/vscode": "1.93.0",
-    "@vscode/vsce": "3.6.0",
-    "esbuild": "0.25.8",
-    "eslint": "9.31.0",
-    "eslint-config-prettier": "10.1.8",
-    "glob": "11.0.3",
-    "prettier": "3.6.2",
-    "typescript": "5.8.3",
-    "typescript-eslint": "8.38.0"
-  },
-  "activationEvents": [],
   "categories": [
     "Themes",
     "Other"
@@ -39,36 +17,36 @@
         "command": "vscode-fluent-design.uninstall",
         "title": "Fluent Design: Uninstall"
       }
-    ],
-    "configuration": {
-      "title": "Fluent Design",
-      "type": "object",
-      "properties": {
-        "vscode-fluent-design.enableWallpaper": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable sampling the specified wallpaper",
-          "scope": "application"
-        },
-        "vscode-fluent-design.wallpaperPath": {
-          "type": "string",
-          "default": "C:\\Windows\\Web\\Wallpaper\\Windows\\img0.jpg",
-          "description": "Path to background image (JPEG, PNG, WebP, AVIF, GIF, SVG or TIFF).\nBy default, it will use the Windows 11 light mode wallpaper.",
-          "scope": "application"
-        },
-        "vscode-fluent-design.accent": {
-          "type": "string",
-          "default": "#005fb8",
-          "description": "Accent color. Only HEX values are supported.",
-          "scope": "application"
-        }
-      }
-    }
+    ]
   },
   "description": "Fluent Design Language Patch for VSCode",
+  "devDependencies": {
+    "@eslint/js": "9.31.0",
+    "@types/node": "24.0.15",
+    "@types/vscode": "1.93.0",
+    "@vscode/vsce": "3.6.0",
+    "esbuild": "0.25.8",
+    "eslint": "9.31.0",
+    "eslint-config-prettier": "10.1.8",
+    "glob": "11.0.3",
+    "prettier": "3.6.2",
+    "typescript": "5.8.3",
+    "typescript-eslint": "8.38.0"
+  },
   "displayName": "Fluent Design",
   "engines": {
     "vscode": "^1.93.0"
+  },
+  "extensionKind": ["ui"],
+  "keywords": ["Fluent", "Windows 11", "Mica"],
+  "license": "GPL-3.0-only",
+  "main": "./dist/extension.js",
+  "name": "vscode-fluent-design",
+  "preview": true,
+  "publisher": "Mukul1127",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mukul1127/vscode-fluent-design"
   },
   "scripts": {
     "watch": "bun esbuild.ts --watch",
@@ -78,5 +56,6 @@
     "format": "prettier . --write",
     "lint": "eslint . --fix"
   },
-  "type": "module"
+  "type": "module",
+  "version": "1.0.0"
 }
