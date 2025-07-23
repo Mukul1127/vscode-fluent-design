@@ -1,10 +1,8 @@
-import { stat } from "node:fs/promises";
 import { Logger } from "/src/logger";
 import { env } from "vscode";
+import { globIterate } from "glob";
 
-import { glob } from "glob";
-
-const logger = new Logger("workbench.ts");
+const logger = new Logger("file.ts");
 
 /**
  * Searches and returns the file path.
@@ -15,30 +13,15 @@ const logger = new Logger("workbench.ts");
  * @throws {Error} If no valid files were found.
  */
 export async function locateFile(globPattern: string): Promise<string> {
-  logger.info(`Started locating file with glob pattern: ${globPattern}`);
-
-  const entries: string[] = await glob(globPattern, {
+  for await (const path of globIterate(globPattern, {
+    absolute: true,
     cwd: env.appRoot,
     nodir: true,
-  });
-
-  if (entries.length === 0) {
-    throw new Error("No files matched the glob pattern.");
+    stat: true,
+  })) {
+    logger.info(`For glob: ${globPattern}, found path: ${path}`);
+    return path;
   }
 
-  const result = await Promise.any(
-    entries.map(async (entry) => {
-      try {
-        await stat(entry); // Ensure we have permmissions to access file.
-        logger.info(`Finished locating file, file path: ${entry}`);
-        return entry;
-      } catch (error: unknown) {
-        const safeError: NodeJS.ErrnoException = error as NodeJS.ErrnoException;
-        logger.warn(`Path ${entry} failed validation, error: ${safeError.message}`);
-        throw safeError; // Propegate error so promise fails.
-      }
-    }),
-  );
-
-  return result;
+  throw new Error("No files matched the glob pattern.");
 }

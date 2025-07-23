@@ -9,11 +9,8 @@ import { cp, rm } from "node:fs/promises";
  * @returns {Promise<void>} Resolves when the backup is created.
  * @throws {NodeJS.ErrnoException} Throws if one of the paths couldn't be accessed.
  */
-export async function createBackup(
-  originalFilePath: string,
-  backupFilePath: string,
-): Promise<void> {
-  await rm(backupFilePath, { recursive: true });
+export async function createBackup(originalFilePath: string, backupFilePath: string): Promise<void> {
+  await rm(backupFilePath, { recursive: true, force: true });
   await cp(originalFilePath, backupFilePath, { recursive: true });
 }
 
@@ -26,11 +23,8 @@ export async function createBackup(
  * @returns {Promise<void>} Resolves when the backup is restored.
  * @throws {NodeJS.ErrnoException} Throws if one of the paths couldn't be accessed.
  */
-export async function restoreBackup(
-  backupFilePath: string,
-  originalFilePath: string,
-): Promise<void> {
-  await rm(originalFilePath, { recursive: true });
+export async function restoreBackup(backupFilePath: string, originalFilePath: string): Promise<void> {
+  await rm(originalFilePath, { recursive: true, force: true });
   await cp(backupFilePath, originalFilePath, { recursive: true });
 }
 

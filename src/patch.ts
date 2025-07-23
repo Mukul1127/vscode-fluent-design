@@ -9,46 +9,38 @@ const fluentDesignTagEnd = "/* Fluent Design Patch -- End */";
 
 const fileMapping = {
   "main.js": "out/main.js",
-  "workbench.html":
-    "out/vs/code/{electron-browser,electron-sandbox}/workbench/{workbench.html,workbench.esm.html}",
 };
 
 /**
  * Patches the editor with the Fluent Design Patch.
  *
  * @async
- * @returns {Promise<void>} A promise that resolves when the patching completed.
+ * @returns {Promise<PromiseSettledResult<void>[]>} A promise that resolves when the patching completed.
  * @throws {NodeJS.ErrnoException} Throws if an error reading or writing a file occured.
  */
-export async function patch(): Promise<void> {
-  await Promise.allSettled(
+export async function patch(): Promise<PromiseSettledResult<void>[]> {
+  return await Promise.allSettled(
     Object.entries(fileMapping).map(async ([fileName, targetGlob]): Promise<void> => {
-      const patchFilePath = new URL(`modifyFiles/${fileName}`, import.meta.url);
-      let patchContent: string;
-      try {
-        patchContent = await readFile(patchFilePath, { encoding: "utf-8" });
-      } catch (error: unknown) {
-        const safeError: NodeJS.ErrnoException = error as NodeJS.ErrnoException;
-        logger.error(`Failed to read patch file: ${safeError.message}.`);
-        return;
-      }
+      const patchFilePath = import.meta.resolve(`modifyFiles/${fileName}`);
+      const patchContent = await readFile(patchFilePath, {
+        encoding: "utf-8",
+      });
 
-      const targetFile = await locateFile(targetGlob);
-
-      const targetContents = await readFile(targetFile, {
+      const targetFilePath = await locateFile(targetGlob);
+      const targetContents = await readFile(targetFilePath, {
         encoding: "utf-8",
       });
 
       if (targetContents.includes(fluentDesignTagStart)) {
-        logger.warn(`Patch already applied to ${targetFile}.`);
-        return;
+        logger.warn(`Patch already applied to ${targetFilePath}.`);
+        throw new Error("Patch already applied to file.");
       }
 
       const newContents = targetContents + fluentDesignTagStart + patchContent + fluentDesignTagEnd;
 
-      await writeFile(targetFile, newContents, { encoding: "utf-8" });
+      await writeFile(targetFilePath, newContents, { encoding: "utf-8" });
 
-      console.log(`Patched file: ${targetFile}`);
+      logger.info(`Patched file: ${targetFilePath}`);
     }),
   );
 }
@@ -58,6 +50,7 @@ export async function patch(): Promise<void> {
  *
  * @async
  * @returns {Promise<boolean>} A promise that resolves true if the patch is installed and false otherwise.
+ * @throws {Error} If the main.js file couldn't be located or we failed to read it.
  */
 export async function isPatchInstalled(): Promise<boolean> {
   const filePath = await locateFile("out/main.js");

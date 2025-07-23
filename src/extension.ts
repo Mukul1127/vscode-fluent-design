@@ -1,8 +1,8 @@
 import { disposeOutputChannel, Logger, showOutputChannel } from "/src/logger";
-import { messages } from "/src/messages";
 import type { Disposable } from "vscode";
-import { commands, window } from "vscode";
-import { isPatchInstalled } from "./patch";
+import { commands, env, window } from "vscode";
+import { isPatchInstalled, patch } from "/src/patch";
+import { createBackup, restoreBackup, deleteBackup } from "/src/backups";
 
 const logger = new Logger("extension.ts");
 
@@ -12,7 +12,7 @@ const logger = new Logger("extension.ts");
  * @returns {void}
  */
 function reloadWindow(): void {
-  window.showInformationMessage(messages.patchModified, "Restart VSCode").then((): void => {
+  window.showInformationMessage("VSCode needs to restart to apply these changes.", "Restart VSCode").then((): void => {
     logger.info("Reloading window.");
     commands.executeCommand("workbench.action.reloadWindow");
   });
@@ -25,10 +25,35 @@ function reloadWindow(): void {
  * @returns {Promise<void>} A promise that resolves when the patch is installed.
  */
 async function install(): Promise<void> {
-  const patchInstalled = await isPatchInstalled();
+  const patchInstalled = await isPatchInstalled().catch((error: unknown) => {
+    const safeError = error as Error;
+    logger.error(`Failed to check if patch is installed, error: ${safeError.message}`);
+    throw safeError;
+  });
   if (patchInstalled) {
     logger.error("Patch is already installed.");
     return;
+  }
+
+  await createBackup(env.appRoot, `${env.appRoot}.bak`).catch((error: unknown) => {
+    const safeError = error as NodeJS.ErrnoException;
+    logger.error(`Failed to create backup, error: ${safeError.message}`);
+    throw safeError;
+  });
+
+  const results = await patch().catch((error: unknown) => {
+    const safeError = error as NodeJS.ErrnoException;
+    logger.error(`Failed to patch, error: ${safeError.message}`);
+    throw safeError;
+  });
+
+  const rejectedResults = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");
+  if (rejectedResults.length > 0) {
+    logger.error("Some files couldn't be patched.");
+    rejectedResults.forEach((r) => {
+      console.error(r.reason);
+    });
+    throw new Error("Some files couldn't be patched.");
   }
 
   reloadWindow();
@@ -41,10 +66,35 @@ async function install(): Promise<void> {
  * @returns {Promise<void>} A promise that resolves when the patch is reinstalled.
  */
 async function reinstall(): Promise<void> {
-  const patchInstalled = await isPatchInstalled();
+  const patchInstalled = await isPatchInstalled().catch((error: unknown) => {
+    const safeError = error as Error;
+    logger.error(`Failed to check if patch is installed, error: ${safeError.message}`);
+    throw safeError;
+  });
   if (!patchInstalled) {
     logger.error("Patch is not installed.");
     return;
+  }
+
+  await restoreBackup(`${env.appRoot}.bak`, env.appRoot).catch((error: unknown) => {
+    const safeError = error as NodeJS.ErrnoException;
+    logger.error(`Failed to restore backup, error: ${safeError.message}`);
+    throw safeError;
+  });
+
+  const results = await patch().catch((error: unknown) => {
+    const safeError = error as NodeJS.ErrnoException;
+    logger.error(`Failed to patch, error: ${safeError.message}`);
+    throw safeError;
+  });
+
+  const rejectedResults = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");
+  if (rejectedResults.length > 0) {
+    logger.error("Some files couldn't be patched.");
+    rejectedResults.forEach((r) => {
+      console.error(r.reason);
+    });
+    throw new Error("Some files couldn't be patched.");
   }
 
   reloadWindow();
@@ -57,11 +107,27 @@ async function reinstall(): Promise<void> {
  * @returns {Promise<void>} A promise that resolves when the patch is uninstalled.
  */
 async function uninstall(): Promise<void> {
-  const patchInstalled = await isPatchInstalled();
+  const patchInstalled = await isPatchInstalled().catch((error: unknown) => {
+    const safeError = error as Error;
+    logger.error(`Failed to check if patch is installed, error: ${safeError.message}`);
+    return;
+  });
   if (!patchInstalled) {
     logger.error("Patch is not installed.");
     return;
   }
+
+  await restoreBackup(`${env.appRoot}.bak`, env.appRoot).catch((error: unknown) => {
+    const safeError = error as NodeJS.ErrnoException;
+    logger.error(`Failed to restore backup, error: ${safeError.message}`);
+    return;
+  });
+
+  await deleteBackup(`${env.appRoot}.bak`).catch((error: unknown) => {
+    const safeError = error as NodeJS.ErrnoException;
+    logger.error(`Failed to delete backup, error: ${safeError.message}`);
+    return;
+  });
 
   reloadWindow();
 }
@@ -76,8 +142,6 @@ let uninstallCommand: Disposable;
  * @returns {void}
  */
 export function activate(): void {
-  logger.info("Extension started activating.");
-
   installCommand = commands.registerCommand("vscode-fluent-design.install", install);
   reinstallCommand = commands.registerCommand("vscode-fluent-design.reinstall", reinstall);
   uninstallCommand = commands.registerCommand("vscode-fluent-design.uninstall", uninstall);
@@ -93,8 +157,6 @@ export function activate(): void {
  * @returns {void}
  */
 export function deactivate(): void {
-  logger.info("Extension started deactivating.");
-
   installCommand.dispose();
   reinstallCommand.dispose();
   uninstallCommand.dispose();

@@ -17,12 +17,6 @@
 
     "isolatedModules": true
   },
-  "include": [
-    "src/**/*",
-    "eslint.config.ts",
-    "prettier.config.ts",
-    "esbuild.config.ts",
-    "esbuild.ts"
-  ],
+  "include": ["src/**/*", "eslint.config.ts", "prettier.config.ts", "esbuild.config.ts", "esbuild.ts"],
   "exclude": ["node_modules/**/*", "dist/**/*", "*.vsix"]
 }
