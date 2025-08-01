@@ -13,13 +13,15 @@ const logger = new Logger("file.ts");
  * @throws {Error} If no valid files were found.
  */
 export async function locateFile(globPattern: string): Promise<string> {
+  const prefixedLogger = logger.prefix("locateFile()");
+
   for await (const path of globIterate(globPattern, {
     absolute: true,
     cwd: env.appRoot,
     nodir: true,
     stat: true,
   })) {
-    logger.info(`For glob: ${globPattern}, found path: ${path}`);
+    prefixedLogger.info(`For glob: ${globPattern}, found path: ${path}`);
     return path;
   }
 

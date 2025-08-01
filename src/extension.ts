@@ -1,4 +1,4 @@
-import { disposeOutputChannel, Logger, showOutputChannel } from "/src/logger";
+import { disposeLogChannel, Logger, showLogChannel } from "/src/logger";
 import type { Disposable } from "vscode";
 import { commands, env, window } from "vscode";
 import { isPatchInstalled, patch } from "/src/patch";
@@ -25,33 +25,38 @@ function reloadWindow(): void {
  * @returns {Promise<void>} A promise that resolves when the patch is installed.
  */
 async function install(): Promise<void> {
+  const prefixedLogger = logger.prefix("install()");
+
   const patchInstalled = await isPatchInstalled().catch((error: unknown) => {
     const safeError = error as Error;
-    logger.error(`Failed to check if patch is installed, error: ${safeError.message}`);
+    prefixedLogger.error(`Failed to check if patch is installed, error: ${safeError.message}`);
     throw safeError;
   });
+  prefixedLogger.info(`Patch installed: ${patchInstalled ? "Yes" : "No"}`);
   if (patchInstalled) {
-    logger.error("Patch is already installed.");
+    prefixedLogger.error("Command requires patch to not be installed.");
     return;
   }
 
   await createBackup(env.appRoot, `${env.appRoot}.bak`).catch((error: unknown) => {
     const safeError = error as NodeJS.ErrnoException;
-    logger.error(`Failed to create backup, error: ${safeError.message}`);
+    prefixedLogger.error(`Failed to create backup, error: ${safeError.message}`);
     throw safeError;
   });
 
+  prefixedLogger.info("Created Backup");
+
   const results = await patch().catch((error: unknown) => {
     const safeError = error as NodeJS.ErrnoException;
-    logger.error(`Failed to patch, error: ${safeError.message}`);
+    prefixedLogger.error(`Failed to patch, error: ${safeError.message}`);
     throw safeError;
   });
 
   const rejectedResults = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");
   if (rejectedResults.length > 0) {
-    logger.error("Some files couldn't be patched.");
+    prefixedLogger.error("Some files couldn't be patched.");
     rejectedResults.forEach((r) => {
-      console.error(r.reason);
+      prefixedLogger.error(String(r.reason));
     });
     throw new Error("Some files couldn't be patched.");
   }
@@ -66,33 +71,36 @@ async function install(): Promise<void> {
  * @returns {Promise<void>} A promise that resolves when the patch is reinstalled.
  */
 async function reinstall(): Promise<void> {
+  const prefixedLogger = logger.prefix("reinstall()");
+
   const patchInstalled = await isPatchInstalled().catch((error: unknown) => {
     const safeError = error as Error;
-    logger.error(`Failed to check if patch is installed, error: ${safeError.message}`);
+    prefixedLogger.error(`Failed to check if patch is installed, error: ${safeError.message}`);
     throw safeError;
   });
+  prefixedLogger.info(`Patch installed: ${patchInstalled ? "Yes" : "No"}`);
   if (!patchInstalled) {
-    logger.error("Patch is not installed.");
+    prefixedLogger.error("Command requires patch to be installed.");
     return;
   }
 
   await restoreBackup(`${env.appRoot}.bak`, env.appRoot).catch((error: unknown) => {
     const safeError = error as NodeJS.ErrnoException;
-    logger.error(`Failed to restore backup, error: ${safeError.message}`);
+    prefixedLogger.error(`Failed to restore backup, error: ${safeError.message}`);
     throw safeError;
   });
 
   const results = await patch().catch((error: unknown) => {
     const safeError = error as NodeJS.ErrnoException;
-    logger.error(`Failed to patch, error: ${safeError.message}`);
+    prefixedLogger.error(`Failed to patch, error: ${safeError.message}`);
     throw safeError;
   });
 
   const rejectedResults = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");
   if (rejectedResults.length > 0) {
-    logger.error("Some files couldn't be patched.");
+    prefixedLogger.error("Some files couldn't be patched.");
     rejectedResults.forEach((r) => {
-      console.error(r.reason);
+      prefixedLogger.error(String(r.reason));
     });
     throw new Error("Some files couldn't be patched.");
   }
@@ -107,25 +115,28 @@ async function reinstall(): Promise<void> {
  * @returns {Promise<void>} A promise that resolves when the patch is uninstalled.
  */
 async function uninstall(): Promise<void> {
+  const prefixedLogger = logger.prefix("uninstall()");
+
   const patchInstalled = await isPatchInstalled().catch((error: unknown) => {
     const safeError = error as Error;
-    logger.error(`Failed to check if patch is installed, error: ${safeError.message}`);
-    return;
+    prefixedLogger.error(`Failed to check if patch is installed, error: ${safeError.message}`);
+    throw safeError;
   });
+  prefixedLogger.info(`Patch installed: ${patchInstalled ? "Yes" : "No"}`);
   if (!patchInstalled) {
-    logger.error("Patch is not installed.");
+    prefixedLogger.error("Command requires patch to be installed.");
     return;
   }
 
   await restoreBackup(`${env.appRoot}.bak`, env.appRoot).catch((error: unknown) => {
     const safeError = error as NodeJS.ErrnoException;
-    logger.error(`Failed to restore backup, error: ${safeError.message}`);
+    prefixedLogger.error(`Failed to restore backup, error: ${safeError.message}`);
     return;
   });
 
   await deleteBackup(`${env.appRoot}.bak`).catch((error: unknown) => {
     const safeError = error as NodeJS.ErrnoException;
-    logger.error(`Failed to delete backup, error: ${safeError.message}`);
+    prefixedLogger.error(`Failed to delete backup, error: ${safeError.message}`);
     return;
   });
 
@@ -146,9 +157,7 @@ export function activate(): void {
   reinstallCommand = commands.registerCommand("vscode-fluent-design.reinstall", reinstall);
   uninstallCommand = commands.registerCommand("vscode-fluent-design.uninstall", uninstall);
 
-  showOutputChannel();
-
-  logger.info("Extension finished activating.");
+  showLogChannel();
 }
 
 /**
@@ -161,7 +170,5 @@ export function deactivate(): void {
   reinstallCommand.dispose();
   uninstallCommand.dispose();
 
-  disposeOutputChannel();
-
-  logger.info("Extension finished deactivating.");
+  disposeLogChannel();
 }

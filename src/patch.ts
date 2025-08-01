@@ -1,4 +1,4 @@
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "original-fs/promises";
 import { locateFile } from "/src/file";
 import { Logger } from "/src/logger";
 
@@ -19,9 +19,11 @@ const fileMapping = {
  * @throws {NodeJS.ErrnoException} Throws if an error reading or writing a file occured.
  */
 export async function patch(): Promise<PromiseSettledResult<void>[]> {
+  const prefixedLogger = logger.prefix("patch()");
+
   return await Promise.allSettled(
     Object.entries(fileMapping).map(async ([fileName, targetGlob]): Promise<void> => {
-      const patchFilePath = import.meta.resolve(`modifyFiles/${fileName}`);
+      const patchFilePath = new URL(`./modifyFiles/${fileName}`, import.meta.url); // Don't use import.meta.resolve as readFile needs a URL object.
       const patchContent = await readFile(patchFilePath, {
         encoding: "utf-8",
       });
@@ -32,15 +34,15 @@ export async function patch(): Promise<PromiseSettledResult<void>[]> {
       });
 
       if (targetContents.includes(fluentDesignTagStart)) {
-        logger.warn(`Patch already applied to ${targetFilePath}.`);
-        throw new Error("Patch already applied to file.");
+        prefixedLogger.warn(`Patch already applied to ${targetFilePath}.`);
+        throw new Error("Patch already applied to file."); // Throw to reject promise.
       }
 
       const newContents = targetContents + fluentDesignTagStart + patchContent + fluentDesignTagEnd;
 
       await writeFile(targetFilePath, newContents, { encoding: "utf-8" });
 
-      logger.info(`Patched file: ${targetFilePath}`);
+      prefixedLogger.info(`Patched file: ${targetFilePath}`);
     }),
   );
 }

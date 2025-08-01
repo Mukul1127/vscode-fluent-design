@@ -19,7 +19,7 @@
       }
     ]
   },
-  "description": "Fluent Design Language Patch for VSCode",
+  "description": "Fluent Design language patch for VSCode",
   "devDependencies": {
     "@eslint/js": "9.31.0",
     "@types/node": "24.0.15",
@@ -37,8 +37,14 @@
   "engines": {
     "vscode": "^1.93.0"
   },
-  "extensionKind": ["ui"],
-  "keywords": ["Fluent", "Windows 11", "Mica"],
+  "extensionKind": [
+    "ui"
+  ],
+  "keywords": [
+    "Fluent",
+    "Windows 11",
+    "Mica"
+  ],
   "license": "GPL-3.0-only",
   "main": "./dist/extension.js",
   "name": "vscode-fluent-design",
@@ -49,12 +55,12 @@
     "url": "https://github.com/Mukul1127/vscode-fluent-design"
   },
   "scripts": {
-    "watch": "bun esbuild.ts --watch",
-    "package": "bun esbuild.ts --production && vsce package --no-dependencies",
-    "clean": "(rm -r dist || true) && (rm *.vsix || true)",
     "check": "tsc",
+    "clean": "(rm -r dist || true) && (rm *.vsix || true)",
     "format": "prettier . --write",
-    "lint": "eslint . --fix"
+    "lint": "eslint --fix",
+    "package": "bun esbuild.ts --production && vsce package --no-dependencies",
+    "watch": "bun esbuild.ts --watch"
   },
   "type": "module",
   "version": "1.0.0"

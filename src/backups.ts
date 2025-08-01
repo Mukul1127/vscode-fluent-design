@@ -1,4 +1,4 @@
-import { cp, rm } from "node:fs/promises";
+import { cp, rm } from "original-fs/promises";
 
 /**
  * Creates a backup overwriting the original if it exists.
@@ -10,6 +10,7 @@ import { cp, rm } from "node:fs/promises";
  * @throws {NodeJS.ErrnoException} Throws if one of the paths couldn't be accessed.
  */
 export async function createBackup(originalFilePath: string, backupFilePath: string): Promise<void> {
+  // Delete folder then copy as we can delete the backup directory while VSCode is running.
   await rm(backupFilePath, { recursive: true, force: true });
   await cp(originalFilePath, backupFilePath, { recursive: true });
 }
@@ -24,8 +25,8 @@ export async function createBackup(originalFilePath: string, backupFilePath: str
  * @throws {NodeJS.ErrnoException} Throws if one of the paths couldn't be accessed.
  */
 export async function restoreBackup(backupFilePath: string, originalFilePath: string): Promise<void> {
-  await rm(originalFilePath, { recursive: true, force: true });
-  await cp(backupFilePath, originalFilePath, { recursive: true });
+  // Copy overwritting changes as we can't just delete the directory while VSCode is running.
+  await cp(backupFilePath, originalFilePath, { recursive: true, force: true });
 }
 
 /**
