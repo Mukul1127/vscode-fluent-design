@@ -21,16 +21,16 @@
   },
   "description": "Fluent Design language patch for VSCode",
   "devDependencies": {
-    "@eslint/js": "9.31.0",
-    "@types/node": "24.0.15",
+    "@eslint/js": "9.32.0",
+    "@types/node": "24.1.0",
     "@types/vscode": "1.93.0",
     "@vscode/vsce": "3.6.0",
     "esbuild": "0.25.8",
-    "eslint": "9.31.0",
+    "eslint": "9.32.0",
     "eslint-config-prettier": "10.1.8",
     "glob": "11.0.3",
     "prettier": "3.6.2",
-    "typescript": "5.8.3",
+    "typescript": "5.9.2",
     "typescript-eslint": "8.38.0"
   },
   "displayName": "Fluent Design",
@@ -57,6 +57,7 @@
   "scripts": {
     "check": "tsc",
     "clean": "(rm -r dist || true) && (rm *.vsix || true)",
+    "compile": "bun esbuild.ts",
     "format": "prettier . --write",
     "lint": "eslint --fix",
     "package": "bun esbuild.ts --production && vsce package --no-dependencies",

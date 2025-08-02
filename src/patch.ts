@@ -7,7 +7,7 @@ const logger = new Logger().prefix("patch.ts");
 const fluentDesignTagStart = "/* Fluent Design Patch -- Start */";
 const fluentDesignTagEnd = "/* Fluent Design Patch -- End */";
 
-const fileMapping = {
+const filePatchMapping = {
   "main.js": "out/main.js",
 };
 
@@ -22,25 +22,31 @@ export async function patch(): Promise<PromiseSettledResult<void>[]> {
   const prefixedLogger = logger.prefix("patch()");
 
   return await Promise.allSettled(
-    Object.entries(fileMapping).map(async ([fileName, targetGlob]): Promise<void> => {
-      const patchFilePath = new URL(`./modifyFiles/${fileName}`, import.meta.url); // Don't use import.meta.resolve as readFile needs a URL object.
-      const patchContent = await readFile(patchFilePath, {
-        encoding: "utf-8",
-      });
-
+    Object.entries(filePatchMapping).map(async ([fileName, targetGlob]): Promise<void> => {
       const targetFilePath = await locateFile(targetGlob);
-      const targetContents = await readFile(targetFilePath, {
-        encoding: "utf-8",
-      });
+      const targetContents = await readFile(targetFilePath, { encoding: "utf-8" });
+
+      if (!targetContents.trim()) {
+        prefixedLogger.warn(`Target content for ${targetFilePath} is empty.`);
+        throw new Error(`Target content for ${targetFilePath} is empty.`);
+      }
 
       if (targetContents.includes(fluentDesignTagStart)) {
         prefixedLogger.warn(`Patch already applied to ${targetFilePath}.`);
-        throw new Error("Patch already applied to file."); // Throw to reject promise.
+        throw new Error("Patch already applied to file.");
       }
 
-      const newContents = targetContents + fluentDesignTagStart + patchContent + fluentDesignTagEnd;
+      const patchFilePath = new URL(`./modifyFiles/${fileName}`, import.meta.url);
+      const patchContent = await readFile(patchFilePath, { encoding: "utf-8" });
 
-      await writeFile(targetFilePath, newContents, { encoding: "utf-8" });
+      if (!patchContent.trim()) {
+        prefixedLogger.warn(`Patch content for ${patchFilePath} is empty.`);
+        throw new Error(`Patch content for ${patchFilePath} is empty.`);
+      }
+
+      const newTargetContents = targetContents + fluentDesignTagStart + patchContent + fluentDesignTagEnd;
+
+      await writeFile(targetFilePath, newTargetContents, { encoding: "utf-8" });
 
       prefixedLogger.info(`Patched file: ${targetFilePath}`);
     }),
