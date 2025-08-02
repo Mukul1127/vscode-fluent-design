@@ -4,7 +4,7 @@ import { commands, env, window } from "vscode";
 import { isPatchInstalled, patch } from "/src/patch";
 import { createBackup, restoreBackup, deleteBackup } from "/src/backups";
 
-const logger = new Logger("extension.ts");
+const logger = new Logger().prefix("extension.ts");
 
 /**
  * Reloads the window.

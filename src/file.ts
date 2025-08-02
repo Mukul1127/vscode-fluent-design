@@ -1,8 +1,8 @@
 import { Logger } from "/src/logger";
 import { env } from "vscode";
-import { globIterate } from "glob";
+import { glob } from "glob";
 
-const logger = new Logger("file.ts");
+const logger = new Logger().prefix("file.ts");
 
 /**
  * Searches and returns the file path.
@@ -15,15 +15,18 @@ const logger = new Logger("file.ts");
 export async function locateFile(globPattern: string): Promise<string> {
   const prefixedLogger = logger.prefix("locateFile()");
 
-  for await (const path of globIterate(globPattern, {
+  const [match] = await glob(globPattern, {
     absolute: true,
     cwd: env.appRoot,
     nodir: true,
     stat: true,
-  })) {
-    prefixedLogger.info(`For glob: ${globPattern}, found path: ${path}`);
-    return path;
+  });
+
+  if (!match) {
+    prefixedLogger.error(`For glob: ${globPattern}, No files matched.`);
+    throw new Error(`For glob: ${globPattern}, No files matched.`);
   }
 
-  throw new Error("No files matched the glob pattern.");
+  prefixedLogger.info(`For glob: ${globPattern}, found path: ${match}.`);
+  return match;
 }

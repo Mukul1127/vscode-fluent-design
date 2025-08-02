@@ -16,7 +16,7 @@ export function getContexts(production: boolean): BuildOptions[] {
     {
       bundle: true,
       entryPoints: ["src/modifyFiles/**/*"],
-      external: ["electron", "original-fs"],
+      external: ["electron"],
       format: "esm",
       outbase: "./src",
       outdir: "./dist",

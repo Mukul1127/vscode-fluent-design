@@ -2,7 +2,7 @@ import { readFile, writeFile } from "original-fs/promises";
 import { locateFile } from "/src/file";
 import { Logger } from "/src/logger";
 
-const logger = new Logger("patch.ts");
+const logger = new Logger().prefix("patch.ts");
 
 const fluentDesignTagStart = "/* Fluent Design Patch -- Start */";
 const fluentDesignTagEnd = "/* Fluent Design Patch -- End */";

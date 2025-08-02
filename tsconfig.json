@@ -1,22 +1,17 @@
 {
   "compilerOptions": {
-    "moduleResolution": "bundler",
-    "module": "esnext",
-    "target": "esnext",
-
-    "strict": true,
-    "noEmit": true,
-
-    "resolveJsonModule": true,
     "allowJs": true,
-    "allowImportingTsExtensions": true,
-
+    "isolatedModules": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
     "paths": {
       "/*": ["./*"]
     },
-
-    "isolatedModules": true
+    "resolveJsonModule": true,
+    "strict": true,
+    "target": "esnext"
   },
-  "include": ["src/**/*", "eslint.config.ts", "prettier.config.ts", "esbuild.config.ts", "esbuild.ts"],
-  "exclude": ["node_modules/**/*", "dist/**/*", "*.vsix"]
+  "exclude": ["node_modules/**/*", "dist/**/*", "*.vsix"],
+  "include": ["src/**/*", "eslint.config.ts", "prettier.config.ts", "esbuild.config.ts", "esbuild.ts"]
 }

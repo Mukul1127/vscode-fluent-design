@@ -8,11 +8,7 @@ const outputChannel = window.createOutputChannel(pkg.displayName, {
 });
 
 export class Logger {
-  private _prefix: string;
-
-  constructor(prefix: string) {
-    this._prefix = prefix;
-  }
+  private _prefix = "GLOBAL";
 
   /**
    * Creates a new logger with an additional prefix.
@@ -21,8 +17,10 @@ export class Logger {
    * @returns {Logger} A new logger instance.
    */
   prefix(newPrefix: string): Logger {
-    const combinedPrefix = `${this._prefix} / ${newPrefix}`;
-    return new Logger(combinedPrefix);
+    const combinedPrefix = `${this._prefix} -> ${newPrefix}`;
+    const newLogger = new Logger();
+    newLogger._prefix = combinedPrefix;
+    return newLogger;
   }
 
   /**
