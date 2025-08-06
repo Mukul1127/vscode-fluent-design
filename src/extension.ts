@@ -1,8 +1,7 @@
 import { disposeLogChannel, Logger, showLogChannel } from "/src/logger";
 import type { Disposable } from "vscode";
-import { commands, env, window } from "vscode";
-import { isPatchInstalled, patch } from "/src/patch";
-import { createBackup, restoreBackup, deleteBackup } from "/src/backups";
+import { commands, window } from "vscode";
+import { isPatchInstalled, installPatch, uninstallPatch } from "/src/patch";
 
 const logger = new Logger().prefix("extension.ts");
 
@@ -38,25 +37,12 @@ async function install(): Promise<void> {
     return;
   }
 
-  await createBackup(env.appRoot, `${env.appRoot}.bak`).catch((error: unknown) => {
-    const safeError = error as NodeJS.ErrnoException;
-    prefixedLogger.error(`Failed to create backup, error: ${safeError.message}`);
-    throw safeError;
-  });
-
-  prefixedLogger.info("Created Backup");
-
-  const results = await patch().catch((error: unknown) => {
-    const safeError = error as NodeJS.ErrnoException;
-    prefixedLogger.error(`Failed to patch, error: ${safeError.message}`);
-    throw safeError;
-  });
-
-  const rejectedResults = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");
-  if (rejectedResults.length > 0) {
-    prefixedLogger.error("Some files couldn't be patched.");
-    rejectedResults.forEach((r) => {
-      prefixedLogger.error(String(r.reason));
+  const installResults = await installPatch();
+  const installRejectedResults = installResults.filter((r): r is PromiseRejectedResult => r.status === "rejected");
+  if (installRejectedResults.length > 0) {
+    prefixedLogger.warn("Some files couldn't be patched.");
+    installRejectedResults.forEach((r) => {
+      prefixedLogger.warn(String(r.reason));
     });
     throw new Error("Some files couldn't be patched.");
   }
@@ -84,23 +70,22 @@ async function reinstall(): Promise<void> {
     return;
   }
 
-  await restoreBackup(`${env.appRoot}.bak`, env.appRoot).catch((error: unknown) => {
-    const safeError = error as NodeJS.ErrnoException;
-    prefixedLogger.error(`Failed to restore backup, error: ${safeError.message}`);
-    throw safeError;
-  });
+  const uninstallResults = await uninstallPatch();
+  const uninstallRejectedResults = uninstallResults.filter((r): r is PromiseRejectedResult => r.status === "rejected");
+  if (uninstallRejectedResults.length > 0) {
+    prefixedLogger.warn("Some files couldn't be patched.");
+    uninstallRejectedResults.forEach((r) => {
+      prefixedLogger.warn(String(r.reason));
+    });
+    throw new Error("Some files couldn't be patched.");
+  }
 
-  const results = await patch().catch((error: unknown) => {
-    const safeError = error as NodeJS.ErrnoException;
-    prefixedLogger.error(`Failed to patch, error: ${safeError.message}`);
-    throw safeError;
-  });
-
-  const rejectedResults = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");
-  if (rejectedResults.length > 0) {
-    prefixedLogger.error("Some files couldn't be patched.");
-    rejectedResults.forEach((r) => {
-      prefixedLogger.error(String(r.reason));
+  const installResults = await installPatch();
+  const installRejectedResults = installResults.filter((r): r is PromiseRejectedResult => r.status === "rejected");
+  if (installRejectedResults.length > 0) {
+    prefixedLogger.warn("Some files couldn't be patched.");
+    installRejectedResults.forEach((r) => {
+      prefixedLogger.warn(String(r.reason));
     });
     throw new Error("Some files couldn't be patched.");
   }
@@ -128,17 +113,15 @@ async function uninstall(): Promise<void> {
     return;
   }
 
-  await restoreBackup(`${env.appRoot}.bak`, env.appRoot).catch((error: unknown) => {
-    const safeError = error as NodeJS.ErrnoException;
-    prefixedLogger.error(`Failed to restore backup, error: ${safeError.message}`);
-    return;
-  });
-
-  await deleteBackup(`${env.appRoot}.bak`).catch((error: unknown) => {
-    const safeError = error as NodeJS.ErrnoException;
-    prefixedLogger.error(`Failed to delete backup, error: ${safeError.message}`);
-    return;
-  });
+  const uninstallResults = await uninstallPatch();
+  const uninstallRejectedResults = uninstallResults.filter((r): r is PromiseRejectedResult => r.status === "rejected");
+  if (uninstallRejectedResults.length > 0) {
+    prefixedLogger.warn("Some files couldn't be patched.");
+    uninstallRejectedResults.forEach((r) => {
+      prefixedLogger.warn(String(r.reason));
+    });
+    throw new Error("Some files couldn't be patched.");
+  }
 
   reloadWindow();
 }

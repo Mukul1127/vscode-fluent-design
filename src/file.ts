@@ -10,7 +10,7 @@ const logger = new Logger().prefix("file.ts");
  * @async
  * @param {string} globPattern The glob pattern to search for.
  * @returns {Promise<string>} The path to the file.
- * @throws {NodeJS.ErrnoException} If no valid files were found.
+ * @throws {Error} If no valid files were found.
  */
 export async function locateFile(globPattern: string): Promise<string> {
   const prefixedLogger = logger.prefix("locateFile()");
@@ -24,14 +24,7 @@ export async function locateFile(globPattern: string): Promise<string> {
 
   if (!match) {
     prefixedLogger.error(`For glob: ${globPattern}, no files matched.`);
-
-    // Throw NodeJS.ErrnoException ENOENT
-    const error: NodeJS.ErrnoException = Object.assign(new Error(`No files matched glob pattern: ${globPattern}.`), {
-      code: "ENOENT",
-      path: globPattern,
-      syscall: "glob",
-    });
-    throw error;
+    throw new Error(`For glob: ${globPattern}, no files matched.`);
   }
 
   prefixedLogger.info(`For glob: ${globPattern}, found path: ${match}.`);
