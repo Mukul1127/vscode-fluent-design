@@ -51,49 +51,6 @@ async function install(): Promise<void> {
 }
 
 /**
- * Reinstalls the Fluent Design patch.
- *
- * @async
- * @returns {Promise<void>} A promise that resolves when the patch is reinstalled.
- */
-async function reinstall(): Promise<void> {
-  const prefixedLogger = logger.prefix("reinstall()");
-
-  const patchInstalled = await isPatchInstalled().catch((error: unknown) => {
-    const safeError = error as Error;
-    prefixedLogger.error(`Failed to check if patch is installed, error: ${safeError.message}`);
-    throw safeError;
-  });
-  prefixedLogger.info(`Patch installed: ${patchInstalled ? "Yes" : "No"}`);
-  if (!patchInstalled) {
-    prefixedLogger.error("Command requires patch to be installed.");
-    return;
-  }
-
-  const uninstallResults = await uninstallPatch();
-  const uninstallRejectedResults = uninstallResults.filter((r): r is PromiseRejectedResult => r.status === "rejected");
-  if (uninstallRejectedResults.length > 0) {
-    prefixedLogger.warn("Some files couldn't be patched.");
-    uninstallRejectedResults.forEach((r) => {
-      prefixedLogger.warn(String(r.reason));
-    });
-    throw new Error("Some files couldn't be patched.");
-  }
-
-  const installResults = await installPatch();
-  const installRejectedResults = installResults.filter((r): r is PromiseRejectedResult => r.status === "rejected");
-  if (installRejectedResults.length > 0) {
-    prefixedLogger.warn("Some files couldn't be patched.");
-    installRejectedResults.forEach((r) => {
-      prefixedLogger.warn(String(r.reason));
-    });
-    throw new Error("Some files couldn't be patched.");
-  }
-
-  reloadWindow();
-}
-
-/**
  * Uninstalls the Fluent Design patch.
  *
  * @async
@@ -127,7 +84,6 @@ async function uninstall(): Promise<void> {
 }
 
 let installCommand: Disposable;
-let reinstallCommand: Disposable;
 let uninstallCommand: Disposable;
 
 /**
@@ -137,7 +93,6 @@ let uninstallCommand: Disposable;
  */
 export function activate(): void {
   installCommand = commands.registerCommand("vscode-fluent-design.install", install);
-  reinstallCommand = commands.registerCommand("vscode-fluent-design.reinstall", reinstall);
   uninstallCommand = commands.registerCommand("vscode-fluent-design.uninstall", uninstall);
 
   showLogChannel();
@@ -150,7 +105,6 @@ export function activate(): void {
  */
 export function deactivate(): void {
   installCommand.dispose();
-  reinstallCommand.dispose();
   uninstallCommand.dispose();
 
   disposeLogChannel();

@@ -23,8 +23,8 @@ export async function locateFile(globPattern: string): Promise<string> {
   });
 
   if (!match) {
-    prefixedLogger.error(`For glob: ${globPattern}, no files matched.`);
-    throw new Error(`For glob: ${globPattern}, no files matched.`);
+    prefixedLogger.error(`For glob: ${globPattern}, no files matched or cannot access.`);
+    throw new Error(`For glob: ${globPattern}, no files matched or cannot access.`);
   }
 
   prefixedLogger.info(`For glob: ${globPattern}, found path: ${match}.`);
