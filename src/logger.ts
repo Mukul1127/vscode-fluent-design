@@ -13,7 +13,7 @@ import { window } from "vscode";
 
 type LogLevels = "trace" | "debug" | "info" | "warn" | "error";
 
-const outputChannel = window.createOutputChannel(pkg.displayName, {
+export const outputChannel = window.createOutputChannel(pkg.displayName, {
   log: true,
 });
 
@@ -93,22 +93,4 @@ export class Logger {
   error(message: string): void {
     this.log("error", message);
   }
-}
-
-/**
- * Shows the output channel.
- *
- * @returns {void}
- */
-export function showLogChannel(): void {
-  outputChannel.show(true);
-}
-
-/**
- * Disposes the output channel.
- *
- * @returns {void}
- */
-export function disposeLogChannel(): void {
-  outputChannel.dispose();
 }

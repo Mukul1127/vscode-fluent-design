@@ -37,7 +37,7 @@ export async function installPatch(): Promise<PromiseSettledResult<void>[]> {
         throw new Error(`Target content for ${targetFilePath} is empty.`);
       }
 
-      if (targetContents.includes(fluentDesignTagStart)) {
+      if (targetContents.includes(fluentDesignTagStart) || targetContents.includes(fluentDesignTagEnd)) {
         prefixedLogger.warn(`Patch already applied to ${targetFilePath}.`);
         throw new Error("Patch already applied to file.");
       }

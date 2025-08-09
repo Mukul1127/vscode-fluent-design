@@ -8,9 +8,8 @@
  * You should have received a copy of the GNU General Public License along with vscode-fluent-design. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { disposeLogChannel, Logger, showLogChannel } from "/src/logger";
-import type { Disposable } from "vscode";
-import { commands, window } from "vscode";
+import { outputChannel, Logger } from "/src/logger";
+import { type ExtensionContext, commands, window } from "vscode";
 import { installPatch, uninstallPatch } from "/src/patch";
 
 const logger = new Logger().prefix("extension.ts");
@@ -33,8 +32,8 @@ function reloadWindow(): void {
  * @async
  * @returns {Promise<void>} A promise that resolves when the patch is installed.
  */
-async function install(): Promise<void> {
-  const prefixedLogger = logger.prefix("install()");
+async function installCommand(): Promise<void> {
+  const prefixedLogger = logger.prefix("installCommand()");
 
   const installResults = await installPatch();
   const installRejectedResults = installResults.filter((r): r is PromiseRejectedResult => r.status === "rejected");
@@ -55,8 +54,8 @@ async function install(): Promise<void> {
  * @async
  * @returns {Promise<void>} A promise that resolves when the patch is uninstalled.
  */
-async function uninstall(): Promise<void> {
-  const prefixedLogger = logger.prefix("uninstall()");
+async function uninstallCommand(): Promise<void> {
+  const prefixedLogger = logger.prefix("uninstallCommand()");
 
   const uninstallResults = await uninstallPatch();
   const uninstallRejectedResults = uninstallResults.filter((r): r is PromiseRejectedResult => r.status === "rejected");
@@ -71,29 +70,20 @@ async function uninstall(): Promise<void> {
   reloadWindow();
 }
 
-let installCommand: Disposable;
-let uninstallCommand: Disposable;
-
 /**
  * This function is called when the extension is activated.
  *
+ * @param {ExtensionContext} context The extension context.
  * @returns {void}
  */
-export function activate(): void {
-  installCommand = commands.registerCommand("vscode-fluent-design.install", install);
-  uninstallCommand = commands.registerCommand("vscode-fluent-design.uninstall", uninstall);
+export function activate(context: ExtensionContext): void {
+  // Register commands
+  const install = commands.registerCommand("vscode-fluent-design.install", installCommand);
+  const uninstall = commands.registerCommand("vscode-fluent-design.uninstall", uninstallCommand);
 
-  showLogChannel();
-}
+  // Show log channel
+  outputChannel.show();
 
-/**
- * This function is called when the extension is deactivated.
- *
- * @returns {void}
- */
-export function deactivate(): void {
-  installCommand.dispose();
-  uninstallCommand.dispose();
-
-  disposeLogChannel();
+  // Subscribe commands and log channel to be disposed.
+  context.subscriptions.push(install, uninstall, outputChannel);
 }
