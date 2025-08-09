@@ -20,8 +20,10 @@ const logger = new Logger().prefix("extension.ts");
  * @returns {void}
  */
 function reloadWindow(): void {
+  const prefixedLogger = logger.prefix("reloadWindow()");
+
   window.showInformationMessage("VSCode needs to restart to apply these changes.", "Restart VSCode").then((): void => {
-    logger.info("Reloading window.");
+    prefixedLogger.info("Reloading window.");
     commands.executeCommand("workbench.action.reloadWindow");
   });
 }
@@ -60,11 +62,11 @@ async function uninstallCommand(): Promise<void> {
   const uninstallResults = await uninstallPatch();
   const uninstallRejectedResults = uninstallResults.filter((r): r is PromiseRejectedResult => r.status === "rejected");
   if (uninstallRejectedResults.length > 0) {
-    prefixedLogger.warn("Some files couldn't be patched.");
+    prefixedLogger.warn("Some files couldn't be unpatched.");
     uninstallRejectedResults.forEach((r) => {
       prefixedLogger.warn(String(r.reason));
     });
-    throw new Error("Some files couldn't be patched.");
+    throw new Error("Some files couldn't be unpatched.");
   }
 
   reloadWindow();
