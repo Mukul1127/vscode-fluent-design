@@ -39,7 +39,7 @@ export async function installPatch(): Promise<PromiseSettledResult<void>[]> {
 
       if (targetContents.includes(fluentDesignTagStart) || targetContents.includes(fluentDesignTagEnd)) {
         prefixedLogger.warn(`Patch already applied to ${targetFilePath}.`);
-        throw new Error("Patch already applied to file.");
+        throw new Error(`Patch already applied to ${targetFilePath}.`);
       }
 
       const patchFilePath = new URL(relativePatchFilePath, import.meta.url);
