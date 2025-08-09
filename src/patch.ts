@@ -82,8 +82,8 @@ export async function uninstallPatch(): Promise<PromiseSettledResult<void>[]> {
       const patchEndIndex = targetContents.lastIndexOf(fluentDesignTagEnd);
 
       if (patchStartIndex === -1 || patchEndIndex === -1) {
-        prefixedLogger.warn(`Patch not fully found in ${targetFilePath}.`);
-        throw new Error("Patch not fully found in file.");
+        prefixedLogger.warn(`Patch not found in ${targetFilePath}.`);
+        throw new Error(`Patch not found in ${targetFilePath}.`);
       }
 
       const newTargetContents =

@@ -79,13 +79,10 @@ async function uninstallCommand(): Promise<void> {
  * @returns {void}
  */
 export function activate(context: ExtensionContext): void {
-  // Register commands
   const install = commands.registerCommand("vscode-fluent-design.install", installCommand);
   const uninstall = commands.registerCommand("vscode-fluent-design.uninstall", uninstallCommand);
 
-  // Show log channel
   outputChannel.show();
 
-  // Subscribe commands and log channel to be disposed.
   context.subscriptions.push(install, uninstall, outputChannel);
 }
