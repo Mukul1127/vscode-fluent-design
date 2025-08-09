@@ -1,3 +1,13 @@
+/*
+ * This file is part of vscode-fluent-design.
+ *
+ * vscode-fluent-design is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * vscode-fluent-design is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with vscode-fluent-design. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import { readFile, writeFile } from "node:fs/promises";
 import { locateFile } from "/src/file";
 import { Logger } from "/src/logger";
@@ -69,7 +79,7 @@ export async function uninstallPatch(): Promise<PromiseSettledResult<void>[]> {
       }
 
       const patchStartIndex = targetContents.indexOf(fluentDesignTagStart);
-      const patchEndIndex = targetContents.indexOf(fluentDesignTagEnd);
+      const patchEndIndex = targetContents.lastIndexOf(fluentDesignTagEnd);
 
       if (patchStartIndex === -1 || patchEndIndex === -1) {
         prefixedLogger.warn(`Patch not fully found in ${targetFilePath}.`);
@@ -84,17 +94,4 @@ export async function uninstallPatch(): Promise<PromiseSettledResult<void>[]> {
       prefixedLogger.info(`Unpatched file: ${targetFilePath}`);
     }),
   );
-}
-
-/**
- * Checks whether the Fluent Design Patch is installed.
- *
- * @async
- * @returns {Promise<boolean>} A promise that resolves true if the patch is installed and false otherwise.
- * @throws {Error} If the file couldn't be located or we failed to read it.
- */
-export async function isPatchInstalled(): Promise<boolean> {
-  const filePath = await locateFile(Object.keys(patchMapping)[0]);
-  const fileContents = await readFile(filePath, "utf8");
-  return fileContents.includes(fluentDesignTagStart);
 }

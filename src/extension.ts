@@ -1,7 +1,17 @@
+/*
+ * This file is part of vscode-fluent-design.
+ *
+ * vscode-fluent-design is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * vscode-fluent-design is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with vscode-fluent-design. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import { disposeLogChannel, Logger, showLogChannel } from "/src/logger";
 import type { Disposable } from "vscode";
 import { commands, window } from "vscode";
-import { isPatchInstalled, installPatch, uninstallPatch } from "/src/patch";
+import { installPatch, uninstallPatch } from "/src/patch";
 
 const logger = new Logger().prefix("extension.ts");
 
@@ -26,17 +36,6 @@ function reloadWindow(): void {
 async function install(): Promise<void> {
   const prefixedLogger = logger.prefix("install()");
 
-  const patchInstalled = await isPatchInstalled().catch((error: unknown) => {
-    const safeError = error as Error;
-    prefixedLogger.error(`Failed to check if patch is installed, error: ${safeError.message}`);
-    throw safeError;
-  });
-  prefixedLogger.info(`Patch installed: ${patchInstalled ? "Yes" : "No"}`);
-  if (patchInstalled) {
-    prefixedLogger.error("Command requires patch to not be installed.");
-    return;
-  }
-
   const installResults = await installPatch();
   const installRejectedResults = installResults.filter((r): r is PromiseRejectedResult => r.status === "rejected");
   if (installRejectedResults.length > 0) {
@@ -58,17 +57,6 @@ async function install(): Promise<void> {
  */
 async function uninstall(): Promise<void> {
   const prefixedLogger = logger.prefix("uninstall()");
-
-  const patchInstalled = await isPatchInstalled().catch((error: unknown) => {
-    const safeError = error as Error;
-    prefixedLogger.error(`Failed to check if patch is installed, error: ${safeError.message}`);
-    throw safeError;
-  });
-  prefixedLogger.info(`Patch installed: ${patchInstalled ? "Yes" : "No"}`);
-  if (!patchInstalled) {
-    prefixedLogger.error("Command requires patch to be installed.");
-    return;
-  }
 
   const uninstallResults = await uninstallPatch();
   const uninstallRejectedResults = uninstallResults.filter((r): r is PromiseRejectedResult => r.status === "rejected");
