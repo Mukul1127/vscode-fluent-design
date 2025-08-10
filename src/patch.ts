@@ -18,6 +18,8 @@ const logger = new Logger().prefix("patch.ts");
 const fluentDesignTagStart = "/* Fluent Design Patch -- Start */\n";
 const fluentDesignTagEnd = "/* Fluent Design Patch -- End */\n";
 
+const patchRegex = new RegExp(`${fluentDesignTagStart}[\\s\\S]*?${fluentDesignTagEnd}`, "m");
+
 /**
  * Installs the Fluent Design Patch.
  *
@@ -37,20 +39,25 @@ export async function installPatch(): Promise<PromiseSettledResult<void>[]> {
         throw new Error(`Target content for ${targetFilePath} is empty.`);
       }
 
-      if (targetContents.includes(fluentDesignTagStart) || targetContents.includes(fluentDesignTagEnd)) {
-        prefixedLogger.warn(`Patch already applied to ${targetFilePath}.`);
-        throw new Error(`Patch already applied to ${targetFilePath}.`);
-      }
-
       const patchFilePath = new URL(relativePatchFilePath, import.meta.url);
-      const patchContent = await readFile(patchFilePath, "utf8");
+      const patchContents = await readFile(patchFilePath, "utf8");
 
-      if (!patchContent.trim()) {
+      if (!patchContents.trim()) {
         prefixedLogger.warn(`Patch content for ${patchFilePath} is empty.`);
         throw new Error(`Patch content for ${patchFilePath} is empty.`);
       }
 
-      const newTargetContents = targetContents + fluentDesignTagStart + patchContent + fluentDesignTagEnd;
+      const patchBlock = fluentDesignTagStart + patchContents + fluentDesignTagEnd;
+
+      let newTargetContents = "";
+
+      if (patchRegex.test(targetContents)) {
+        prefixedLogger.info(`For file ${targetFilePath}, replacing current patch.`);
+        newTargetContents = targetContents.replace(patchRegex, patchBlock);
+      } else {
+        prefixedLogger.info(`For file ${targetFilePath}, adding patch.`);
+        newTargetContents = targetContents + patchBlock;
+      }
 
       await writeFile(targetFilePath, newTargetContents, "utf8");
 
@@ -86,8 +93,7 @@ export async function uninstallPatch(): Promise<PromiseSettledResult<void>[]> {
         throw new Error(`Patch not found in ${targetFilePath}.`);
       }
 
-      const newTargetContents =
-        targetContents.slice(0, patchStartIndex) + targetContents.slice(patchEndIndex + fluentDesignTagEnd.length);
+      const newTargetContents = targetContents.slice(0, patchStartIndex) + targetContents.slice(patchEndIndex + fluentDesignTagEnd.length);
 
       await writeFile(targetFilePath, newTargetContents, "utf8");
 

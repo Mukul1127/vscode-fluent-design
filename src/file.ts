@@ -25,18 +25,23 @@ const logger = new Logger().prefix("file.ts");
 export async function locateFile(globPattern: string): Promise<string> {
   const prefixedLogger = logger.prefix("locateFile()");
 
-  const [match] = await glob(globPattern, {
+  const matches = await glob(globPattern, {
     absolute: true,
     cwd: env.appRoot,
     nodir: true,
     stat: true,
   });
 
-  if (!match) {
+  if (matches.length === 0) {
     prefixedLogger.warn(`For glob: ${globPattern}, no files matched or cannot access.`);
     throw new Error(`For glob: ${globPattern}, no files matched or cannot access.`);
   }
 
-  prefixedLogger.info(`For glob: ${globPattern}, found path: ${match}.`);
-  return match;
+  if (matches.length > 1) {
+    prefixedLogger.warn(`For glob: ${globPattern}, multiple files matched, ambiguous.`);
+    throw new Error(`For glob: ${globPattern}, multiple files matched, ambiguous.`);
+  }
+
+  prefixedLogger.info(`For glob: ${globPattern}, found path: ${matches[0]}.`);
+  return matches[0];
 }

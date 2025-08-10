@@ -1,4 +1,10 @@
 {
+  "capabilities": {
+    "untrustedWorkspace": {
+      "supported": false,
+      "description": "Extension modifies core VSCode files."
+    }
+  },
   "categories": [
     "Themes",
     "Other"

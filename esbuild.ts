@@ -41,9 +41,7 @@ async function buildAll(): Promise<void> {
     const results = await Promise.allSettled(contexts.map((opts) => esbuild.context(opts)));
 
     // Filter out fulfilled contexts and report errors
-    const fulfilled = results.filter(
-      (r): r is PromiseFulfilledResult<esbuild.BuildContext> => r.status === "fulfilled",
-    );
+    const fulfilled = results.filter((r): r is PromiseFulfilledResult<esbuild.BuildContext> => r.status === "fulfilled");
     const rejected = results.filter((r): r is PromiseRejectedResult => r.status === "rejected");
 
     if (rejected.length > 0) {

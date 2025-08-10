@@ -9,7 +9,7 @@
  */
 
 import { outputChannel, Logger } from "/src/logger";
-import { type ExtensionContext, commands, window } from "vscode";
+import { type ExtensionContext, ProgressLocation, commands, window } from "vscode";
 import { installPatch, uninstallPatch } from "/src/patch";
 
 const logger = new Logger().prefix("extension.ts");
@@ -31,45 +31,47 @@ function reloadWindow(): void {
 /**
  * Installs the Fluent Design patch.
  *
- * @async
- * @returns {Promise<void>} A promise that resolves when the patch is installed.
+ * @returns {void}
  */
-async function installCommand(): Promise<void> {
-  const prefixedLogger = logger.prefix("installCommand()");
+function installCommand(): void {
+  window.withProgress({ location: ProgressLocation.Notification, title: "Installing..." }, async (): Promise<void> => {
+    const prefixedLogger = logger.prefix("installCommand()");
 
-  const installResults = await installPatch();
-  const installRejectedResults = installResults.filter((r): r is PromiseRejectedResult => r.status === "rejected");
-  if (installRejectedResults.length > 0) {
-    prefixedLogger.warn("Some files couldn't be patched.");
-    installRejectedResults.forEach((r) => {
-      prefixedLogger.warn(String(r.reason));
-    });
-    throw new Error("Some files couldn't be patched.");
-  }
+    const installResults = await installPatch();
+    const installRejectedResults = installResults.filter((r): r is PromiseRejectedResult => r.status === "rejected");
+    if (installRejectedResults.length > 0) {
+      prefixedLogger.warn("Some files couldn't be patched.");
+      installRejectedResults.forEach((r) => {
+        prefixedLogger.warn(String(r.reason));
+      });
+      throw new Error("Some files couldn't be patched.");
+    }
 
-  reloadWindow();
+    reloadWindow();
+  });
 }
 
 /**
  * Uninstalls the Fluent Design patch.
  *
- * @async
- * @returns {Promise<void>} A promise that resolves when the patch is uninstalled.
+ * @returns {void}
  */
-async function uninstallCommand(): Promise<void> {
-  const prefixedLogger = logger.prefix("uninstallCommand()");
+function uninstallCommand(): void {
+  window.withProgress({ location: ProgressLocation.Notification, title: "Uninstalling..." }, async (): Promise<void> => {
+    const prefixedLogger = logger.prefix("uninstallCommand()");
 
-  const uninstallResults = await uninstallPatch();
-  const uninstallRejectedResults = uninstallResults.filter((r): r is PromiseRejectedResult => r.status === "rejected");
-  if (uninstallRejectedResults.length > 0) {
-    prefixedLogger.warn("Some files couldn't be unpatched.");
-    uninstallRejectedResults.forEach((r) => {
-      prefixedLogger.warn(String(r.reason));
-    });
-    throw new Error("Some files couldn't be unpatched.");
-  }
+    const uninstallResults = await uninstallPatch();
+    const uninstallRejectedResults = uninstallResults.filter((r): r is PromiseRejectedResult => r.status === "rejected");
+    if (uninstallRejectedResults.length > 0) {
+      prefixedLogger.warn("Some files couldn't be unpatched.");
+      uninstallRejectedResults.forEach((r) => {
+        prefixedLogger.warn(String(r.reason));
+      });
+      throw new Error("Some files couldn't be unpatched.");
+    }
 
-  reloadWindow();
+    reloadWindow();
+  });
 }
 
 /**

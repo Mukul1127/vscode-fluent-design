@@ -15,7 +15,7 @@ export function getContexts(production: boolean): BuildOptions[] {
     {
       bundle: true,
       entryPoints: ["src/extension.ts"],
-      external: ["vscode", "original-fs"],
+      external: ["vscode"],
       format: "esm",
       outbase: "./src",
       outdir: "./dist",

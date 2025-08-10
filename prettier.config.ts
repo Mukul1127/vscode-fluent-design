@@ -11,7 +11,7 @@
 import type { Config } from "prettier";
 
 const config: Config = {
-  printWidth: 120,
+  printWidth: 140,
 };
 
 export default config;
