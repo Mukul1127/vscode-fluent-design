@@ -15,20 +15,6 @@ import { installPatch, uninstallPatch } from "/src/patch";
 const logger = new Logger().prefix("extension.ts");
 
 /**
- * Reloads the window.
- *
- * @returns {void}
- */
-function reloadWindow(): void {
-  const prefixedLogger = logger.prefix("reloadWindow()");
-
-  window.showInformationMessage("VSCode needs to restart to apply these changes.", "Restart VSCode").then((): void => {
-    prefixedLogger.info("Reloading window.");
-    commands.executeCommand("workbench.action.reloadWindow");
-  });
-}
-
-/**
  * Installs the Fluent Design patch.
  *
  * @returns {void}
@@ -47,7 +33,7 @@ function installCommand(): void {
       throw new Error("Some files couldn't be patched.");
     }
 
-    reloadWindow();
+    window.showInformationMessage("VSCode needs to restart to apply these changes.");
   });
 }
 
@@ -70,7 +56,7 @@ function uninstallCommand(): void {
       throw new Error("Some files couldn't be unpatched.");
     }
 
-    reloadWindow();
+    window.showInformationMessage("VSCode needs to restart to apply these changes.");
   });
 }
 

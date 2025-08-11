@@ -18,13 +18,17 @@ const logger = new Logger().prefix("patch.ts");
 const fluentDesignTagStart = "/* Fluent Design Patch -- Start */\n";
 const fluentDesignTagEnd = "/* Fluent Design Patch -- End */\n";
 
-const patchRegex = new RegExp(`${fluentDesignTagStart}[\\s\\S]*?${fluentDesignTagEnd}`, "m");
+const pattern =
+  fluentDesignTagStart.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "[\\s\\S]*" + fluentDesignTagEnd.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const PATCH_REGEX = new RegExp(pattern, "g");
+
+const FILE_ENCODING = "utf8";
 
 /**
  * Installs the Fluent Design Patch.
  *
  * @async
- * @returns {Promise<PromiseSettledResult<void>[]>} A promise that resolves when the installation completed.
+ * @returns {Promise<PromiseSettledResult<void>[]>} The patching results.
  */
 export async function installPatch(): Promise<PromiseSettledResult<void>[]> {
   const prefixedLogger = logger.prefix("installPatch()");
@@ -32,7 +36,7 @@ export async function installPatch(): Promise<PromiseSettledResult<void>[]> {
   return Promise.allSettled(
     Object.entries(patchMapping).map(async ([targetFileGlob, relativePatchFilePath]): Promise<void> => {
       const targetFilePath = await locateFile(targetFileGlob);
-      const targetContents = await readFile(targetFilePath, "utf8");
+      const targetContents = await readFile(targetFilePath, FILE_ENCODING);
 
       if (!targetContents.trim()) {
         prefixedLogger.warn(`Target content for ${targetFilePath} is empty.`);
@@ -40,7 +44,7 @@ export async function installPatch(): Promise<PromiseSettledResult<void>[]> {
       }
 
       const patchFilePath = new URL(relativePatchFilePath, import.meta.url);
-      const patchContents = await readFile(patchFilePath, "utf8");
+      const patchContents = await readFile(patchFilePath, FILE_ENCODING);
 
       if (!patchContents.trim()) {
         prefixedLogger.warn(`Patch content for ${patchFilePath} is empty.`);
@@ -51,15 +55,15 @@ export async function installPatch(): Promise<PromiseSettledResult<void>[]> {
 
       let newTargetContents = "";
 
-      if (patchRegex.test(targetContents)) {
+      if (PATCH_REGEX.test(targetContents)) {
         prefixedLogger.info(`For file ${targetFilePath}, replacing current patch.`);
-        newTargetContents = targetContents.replace(patchRegex, patchBlock);
+        newTargetContents = targetContents.replace(PATCH_REGEX, patchBlock);
       } else {
         prefixedLogger.info(`For file ${targetFilePath}, adding patch.`);
         newTargetContents = targetContents + patchBlock;
       }
 
-      await writeFile(targetFilePath, newTargetContents, "utf8");
+      await writeFile(targetFilePath, newTargetContents, FILE_ENCODING);
 
       prefixedLogger.info(`Patched file: ${targetFilePath}`);
     }),
@@ -70,7 +74,7 @@ export async function installPatch(): Promise<PromiseSettledResult<void>[]> {
  * Uninstalls the Fluent Design Patch.
  *
  * @async
- * @returns {Promise<PromiseSettledResult<void>[]>} A promise that resolves when the uninstallation completed.
+ * @returns {Promise<PromiseSettledResult<void>[]>} The unpatching results.
  */
 export async function uninstallPatch(): Promise<PromiseSettledResult<void>[]> {
   const prefixedLogger = logger.prefix("uninstallPatch()");
@@ -78,24 +82,21 @@ export async function uninstallPatch(): Promise<PromiseSettledResult<void>[]> {
   return Promise.allSettled(
     Object.keys(patchMapping).map(async (targetFileGlob): Promise<void> => {
       const targetFilePath = await locateFile(targetFileGlob);
-      const targetContents = await readFile(targetFilePath, "utf8");
+      const targetContents = await readFile(targetFilePath, FILE_ENCODING);
 
       if (!targetContents.trim()) {
         prefixedLogger.warn(`Target content for ${targetFilePath} is empty.`);
         throw new Error(`Target content for ${targetFilePath} is empty.`);
       }
 
-      const patchStartIndex = targetContents.indexOf(fluentDesignTagStart);
-      const patchEndIndex = targetContents.lastIndexOf(fluentDesignTagEnd);
-
-      if (patchStartIndex === -1 || patchEndIndex === -1) {
+      if (!PATCH_REGEX.test(targetContents)) {
         prefixedLogger.warn(`Patch not found in ${targetFilePath}.`);
         throw new Error(`Patch not found in ${targetFilePath}.`);
       }
 
-      const newTargetContents = targetContents.slice(0, patchStartIndex) + targetContents.slice(patchEndIndex + fluentDesignTagEnd.length);
+      const newTargetContents = targetContents.replace(PATCH_REGEX, "");
 
-      await writeFile(targetFilePath, newTargetContents, "utf8");
+      await writeFile(targetFilePath, newTargetContents, FILE_ENCODING);
 
       prefixedLogger.info(`Unpatched file: ${targetFilePath}`);
     }),
